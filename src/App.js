@@ -2,14 +2,18 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import BarChart from './components/BarChart';
+import Dashboard from './components/Dashboard';
+import LineChart from './components/LineChart';
+import BubbleChart from './components/BubbleChart';
 import './App.css';
 
 function Home() {
   return (
     <div>
       <h2>Home Page</h2>
-      <BarChart />
+      <Dashboard />
+      <LineChart />
+      <BubbleChart />
     </div>
   );
 }

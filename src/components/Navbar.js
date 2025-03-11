@@ -11,11 +11,9 @@ const Navbar = () => {
 
   return (
     <div className={`sidenav ${isOpen ? 'open' : 'closed'}`}>
-      {/* Keep the button inside but make it always visible */}
       <button className="toggle-btn" onClick={toggleNavbar}>
         ☰
       </button>
-
       <h1 className="logo">MOVIE OCEAN</h1>
       <ul>
         <li>
