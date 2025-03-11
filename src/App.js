@@ -1,10 +1,17 @@
+// filepath: c:\Users\User\OneDrive\Desktop\mario-ojo-241334-formative-one-movie-ocean\src\App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import BarChart from './components/BarChart';
 import './App.css';
 
 function Home() {
-  return <h2>Home Page</h2>;
+  return (
+    <div>
+      <h2>Home Page</h2>
+      <BarChart />
+    </div>
+  );
 }
 
 function Compare() {
