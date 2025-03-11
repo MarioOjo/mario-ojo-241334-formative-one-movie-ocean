@@ -1,0 +1,69 @@
+/* Sidebar */
+.sidenav {
+  height: 100%;
+  width: 250px; /* Default open width */
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #a0a080;
+  overflow-x: hidden;
+  transition: width 0.5s ease-in-out;
+  padding-top: 60px;
+  z-index: 1000;
+}
+
+/* Closed sidebar */
+.sidenav.closed {
+  width: 50px; /* Make it slightly visible */
+  overflow: hidden;
+}
+
+/* Toggle button inside sidebar */
+.sidenav .toggle-btn {
+  position: absolute;
+  top: 20px;
+  left: 10px;
+  font-size: 30px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: black;
+  z-index: 1100;
+}
+
+/* Remove bullet points */
+.sidenav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Sidebar links */
+.sidenav ul li a {
+  display: block;
+  padding: 12px 16px;
+  font-size: 20px;
+  color: black; /* Ensures all text is black */
+  text-decoration: none;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Hover effect */
+.sidenav ul li a:hover {
+  background-color: #575757;
+  color: white; /* Turns white on hover */
+}
+
+/* Ensure the sidebar content is hidden when closed */
+.sidenav.closed .logo,
+.sidenav.closed ul {
+  display: none;
+}
+
+/* Logo styling */
+.sidenav .logo {
+  padding: 12px 16px;
+  font-size: 22px;
+  color: black; /* Ensures logo text is black */
+  display: block;
+}
