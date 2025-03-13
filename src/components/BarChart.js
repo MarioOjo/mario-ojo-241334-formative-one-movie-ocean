@@ -24,10 +24,7 @@ const BarChart = () => {
     plugins: {
       legend: {
         position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Movie Box Office Performance',
+      
       },
     },
     scales: {
