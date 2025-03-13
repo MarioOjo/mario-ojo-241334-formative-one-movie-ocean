@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Grid, Paper, Typography, Box } from '@mui/material';
 import BarChart from './BarChart';
+import DoughnutChart from './DoughnutChart';
 import './Dashboard.css'; // Import the CSS file
 
 const Dashboard = () => {
@@ -9,7 +10,19 @@ const Dashboard = () => {
       <Grid container spacing={3}>
         {/* Main Description Box */}
         <Grid item xs={12}>
-          <Paper className="main-description-box">
+          <Paper
+            sx={{
+              padding: 2,
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              height: 200,
+              backgroundColor: 'rgba(70, 68, 68, 0.8)', // Dark background with transparency
+              color: 'white', // Set text color to white
+              borderRadius: 2, // Add rounded corners
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add subtle shadow
+            }}
+          >
             <Box
               component="img"
               sx={{
@@ -41,13 +54,43 @@ const Dashboard = () => {
             </Box>
           </Paper>
         </Grid>
-        {/* Bar Chart */}
-        <Grid item xs={12}>
-          <Paper className="chart-box">
+        {/* Bar Chart and Doughnut Chart Side by Side */}
+        <Grid item xs={12} md={6}>
+          <Paper
+            sx={{
+              padding: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              height: 400,
+              backgroundColor: 'rgba(70, 68, 68, 0.8)', // Dark background with transparency
+              color: 'white', // Set text color to white
+              borderRadius: 2, // Add rounded corners
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add subtle shadow
+            }}
+          >
             <Typography variant="h6" gutterBottom>
               Movie Box Office Performance
             </Typography>
             <BarChart />
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Paper
+            sx={{
+              padding: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              height: 400,
+              backgroundColor: 'rgba(70, 68, 68, 0.8)', // Dark background with transparency
+              color: 'white', // Set text color to white
+              borderRadius: 2, // Add rounded corners
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add subtle shadow
+            }}
+          >
+            <Typography variant="h6" gutterBottom>
+              IMDb Rating and Number of Ratings
+            </Typography>
+            <DoughnutChart />
           </Paper>
         </Grid>
       </Grid>

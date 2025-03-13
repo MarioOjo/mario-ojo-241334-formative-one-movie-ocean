@@ -24,12 +24,33 @@ const BarChart = () => {
     plugins: {
       legend: {
         position: 'top',
-      
+        labels: {
+          color: 'white', // Set legend text color to white
+        },
+      },
+      title: {
+        display: true,
+        text: 'Movie Box Office Performance',
+        color: 'white', // Set title text color to white
       },
     },
     scales: {
       x: {
         beginAtZero: true,
+        ticks: {
+          color: 'white', // Set x-axis ticks color to white
+        },
+        grid: {
+          color: 'rgba(255, 255, 255, 0.2)', // Set x-axis grid color to white with transparency
+        },
+      },
+      y: {
+        ticks: {
+          color: 'white', // Set y-axis ticks color to white
+        },
+        grid: {
+          color: 'rgba(255, 255, 255, 0.2)', // Set y-axis grid color to white with transparency
+        },
       },
     },
   };
