@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './Navbar.css';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import "./Navbar.css";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,21 +9,27 @@ const Navbar = () => {
     setIsOpen(!isOpen);
   };
 
+  const closeNavbar = () => {
+    setIsOpen(false);
+  };
+
   return (
-    <div className={`sidenav ${isOpen ? 'open' : 'closed'}`}>
-      <button className="toggle-btn" onClick={toggleNavbar}>
+    <>
+      <button className="toggle-btn" onClick={toggleNavbar} aria-label="Toggle navigation">
         ☰
       </button>
-      <h1 className="logo">MOVIE OCEAN</h1>
-      <ul>
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-        <li>
-          <Link to="/compare">Compare</Link>
-        </li>
-      </ul>
-    </div>
+      <nav className={`sidenav ${isOpen ? "open" : ""}`}>
+        <h1 className="logo">MOVIE OCEAN</h1>
+        <ul>
+          <li>
+            <Link to="/" onClick={closeNavbar}>Home</Link>
+          </li>
+          <li>
+            <Link to="/compare" onClick={closeNavbar}>Compare</Link>
+          </li>
+        </ul>
+      </nav>
+    </>
   );
 };
 

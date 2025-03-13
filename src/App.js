@@ -1,10 +1,10 @@
-// filepath: c:\Users\User\OneDrive\Desktop\mario-ojo-241334-formative-one-movie-ocean\src\App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Dashboard from './components/Dashboard';
 import LineChart from './components/LineChart';
 import BubbleChart from './components/BubbleChart';
+import TopBoxOfficeMovies from './components/TopBoxOfficeMovies';
 import './App.css';
 
 function Home() {
@@ -14,6 +14,7 @@ function Home() {
       <Dashboard />
       <LineChart />
       <BubbleChart />
+      <TopBoxOfficeMovies /> {/* Include the TopBoxOfficeMovies component */}
     </div>
   );
 }
