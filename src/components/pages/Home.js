@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Grid, Paper, Typography, Box } from '@mui/material';
-import BarChart from './BarChart';
-import DoughnutChart from './DoughnutChart';
-import LineChart from './LineChart';
-import SearchBar from './SearchBar'; // Import the SearchBar component
-import './Dashboard.css';
+import BarChart from '../BarChart'; // Correct path to BarChart.js
+import DoughnutChart from '../DoughnutChart'; // Correct path to DoughnutChart.js
+import SearchBar from '../SearchBar';
+import './Home.css';
 
-const Dashboard = () => {
+const Home = () => {
   const [data, setData] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
 
@@ -43,7 +42,7 @@ const Dashboard = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <SearchBar onSearch={handleSearch} /> {/* Add the SearchBar */}
+      <SearchBar onSearch={handleSearch} />
       <Grid container spacing={3}>
         {/* Main Description Box */}
         <Grid item xs={12}>
@@ -125,4 +124,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Home;

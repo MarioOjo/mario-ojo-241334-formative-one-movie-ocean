@@ -4,52 +4,41 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const BarChart = () => {
-  const data = {
-    labels: ['Total Gross Box Office', 'Weeks Released'],
-    datasets: [
-      {
-        label: 'Movie Title',
-        data: [19, 4], // 19 million total gross, 4 weeks released
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1,
-      },
-    ],
-  };
+const BarChart = ({ data }) => {
+  if (!data) {
+    return <div>Loading Bar Chart...</div>;
+  }
 
   const options = {
-    indexAxis: 'y', // This will make the bar chart horizontal
     responsive: true,
     plugins: {
       legend: {
         position: 'top',
         labels: {
-          color: 'white', // Set legend text color to white
+          color: 'white',
         },
       },
       title: {
         display: true,
         text: 'Movie Box Office Performance',
-        color: 'white', // Set title text color to white
+        color: 'white',
       },
     },
     scales: {
       x: {
-        beginAtZero: true,
         ticks: {
-          color: 'white', // Set x-axis ticks color to white
+          color: 'white',
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.2)', // Set x-axis grid color to white with transparency
+          color: 'rgba(255, 255, 255, 0.2)',
         },
       },
       y: {
         ticks: {
-          color: 'white', // Set y-axis ticks color to white
+          color: 'white',
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.2)', // Set y-axis grid color to white with transparency
+          color: 'rgba(255, 255, 255, 0.2)',
         },
       },
     },

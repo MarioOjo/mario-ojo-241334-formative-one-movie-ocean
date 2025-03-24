@@ -4,13 +4,17 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-const LineChart = () => {
-  const data = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+const LineChart = ({ data }) => {
+  if (!data) {
+    return <div>Loading Line Chart...</div>; // Handle missing data
+  }
+
+  const chartData = {
+    labels: data.labels,
     datasets: [
       {
-        label: 'Dataset 1',
-        data: [65, 59, 80, 81, 56, 55, 40],
+        label: data.label,
+        data: data.values,
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
         borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 1,
@@ -23,20 +27,38 @@ const LineChart = () => {
     plugins: {
       legend: {
         position: 'top',
+        labels: {
+          color: 'black',
+        },
       },
       title: {
         display: true,
-        text: 'Line Chart Example',
+        text: 'Number of Weeks Released',
+        color: 'black',
       },
     },
     scales: {
       y: {
         beginAtZero: true,
+        ticks: {
+          color: 'black',
+        },
+        grid: {
+          color: 'rgba(0, 0, 0, 0.1)',
+        },
+      },
+      x: {
+        ticks: {
+          color: 'black',
+        },
+        grid: {
+          color: 'rgba(0, 0, 0, 0.1)',
+        },
       },
     },
   };
 
-  return <Line data={data} options={options} />;
+  return <Line data={chartData} options={options} />;
 };
 
 export default LineChart;
