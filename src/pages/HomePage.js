@@ -32,13 +32,22 @@ const HomePage = () => {
 
   // Handle search
   const handleSearch = async () => {
-    if (!query) return;
+    if (!query.trim()) {
+      console.error("Search query is empty");
+      return; // Prevent empty searches
+    }
     setLoading(true);
     try {
       const response = await axios.get(`${API_URL}?query=${query}`, { headers: API_HEADERS });
-      setMovie(response.data.results[0]); // Set the first result as the searched movie
+      if (response.data.results && response.data.results.length > 0) {
+        setMovie(response.data.results[0]); // Set the first result as the searched movie
+      } else {
+        console.warn("No results found for the query:", query);
+        setMovie(null); // No results found
+      }
     } catch (error) {
       console.error("Error searching for movie:", error);
+      setMovie(null);
     } finally {
       setLoading(false);
     }
@@ -50,8 +59,11 @@ const HomePage = () => {
         labels: ['Weekend Gross', 'Total Gross'],
         datasets: [
           {
-            label: movie.title,
-            data: [movie.weekendGross / 1000000, movie.totalGross / 1000000],
+            label: movie.title || 'N/A',
+            data: [
+              movie.weekendGross ? movie.weekendGross / 1000000 : 0,
+              movie.totalGross ? movie.totalGross / 1000000 : 0,
+            ],
             backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
             borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
             borderWidth: 1,
@@ -65,7 +77,7 @@ const HomePage = () => {
         labels: ['IMDb Rating', 'Popularity', 'Vote Count'],
         datasets: [
           {
-            label: movie.title,
+            label: movie.title || 'N/A',
             data: [movie.imdbRating || 0, movie.popularity || 0, movie.voteCount || 0],
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
             borderColor: 'rgba(75, 192, 192, 1)',
@@ -92,21 +104,6 @@ const HomePage = () => {
     heroDescription: {
       fontSize: '1.2rem',
       marginBottom: '20px',
-    },
-    ctaButtons: {
-      display: 'flex',
-      justifyContent: 'center',
-      gap: '15px',
-    },
-    btn: {
-      padding: '10px 20px',
-      borderRadius: '5px',
-      textDecoration: 'none',
-      color: 'white',
-      fontWeight: 'bold',
-    },
-    btnPrimary: {
-      backgroundColor: '#4bc0c0',
     },
     searchBar: {
       display: 'flex',
@@ -157,9 +154,6 @@ const HomePage = () => {
       <section style={styles.hero}>
         <h1 style={styles.heroTitle}>Discover & Compare Movies</h1>
         <p style={styles.heroDescription}>Explore box office hits, ratings, and detailed comparisons</p>
-        <div style={styles.ctaButtons}>
-          <a href="/compare" style={{ ...styles.btn, ...styles.btnPrimary }}>Compare Movies</a>
-        </div>
       </section>
 
       {/* Search Bar */}
