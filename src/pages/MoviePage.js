@@ -1,8 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getMovies, getMovieDetails } from '../../utils/helpers/utils/movieAPI';
 import SingleMovieChart from '../components/Charts/SingleMovieChart';
 import './MoviePage.css';
+import axios from 'axios';
+
+const tmdbAPI = axios.create({
+  baseURL: 'https://api.themoviedb.org/3',
+  params: {
+    api_key: process.env.REACT_APP_TMDB_KEY,
+    language: 'en-US',
+  },
+});
+
+const makeRequest = async (apiInstance, config) => {
+  try {
+    const response = await apiInstance(config);
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
+  }
+};
+
+const getMovieDetails = async (id) => {
+  return makeRequest(tmdbAPI, {
+    url: `/movie/${id}`,
+    params: {
+      append_to_response: 'credits,videos,similar',
+    },
+  });
+};
 
 const MoviePage = () => {
   const { id } = useParams();
@@ -15,7 +42,7 @@ const MoviePage = () => {
         const data = await getMovieDetails(id);
         setMovie(data);
       } catch (error) {
-        console.error("Error fetching movie:", error);
+        console.error('Error fetching movie:', error);
       } finally {
         setLoading(false);
       }
@@ -36,15 +63,19 @@ const MoviePage = () => {
           className="movie-poster"
         />
         <div className="movie-info">
-          <h1>{movie.title} <span>({new Date(movie.release_date).getFullYear()})</span></h1>
+          <h1>
+            {movie.title} <span>({new Date(movie.release_date).getFullYear()})</span>
+          </h1>
           <div className="movie-meta">
             <span className="rating">⭐ {movie.vote_average.toFixed(1)}</span>
             <span>{movie.runtime} mins</span>
             <span>{movie.release_date}</span>
           </div>
           <div className="genres">
-            {movie.genres.map(genre => (
-              <span key={genre.id} className="genre-tag">{genre.name}</span>
+            {movie.genres.map((genre) => (
+              <span key={genre.id} className="genre-tag">
+                {genre.name}
+              </span>
             ))}
           </div>
           <p className="overview">{movie.overview}</p>

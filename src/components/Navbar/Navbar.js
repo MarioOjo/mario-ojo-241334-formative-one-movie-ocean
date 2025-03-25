@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiHome, FiTrendingUp, FiCompare, FiFilm } from 'react-icons/fi';
+import { FiHome, FiTrendingUp, FiBarChart2, FiFilm } from 'react-icons/fi'; // Replaced FiCompare with FiBarChart2
 import './Navbar.css';
 
 const Navbar = () => {
@@ -34,7 +34,7 @@ const Navbar = () => {
         </li>
         <li>
           <Link to="/compare" className="nav-link">
-            <FiCompare className="nav-icon" />
+            <FiBarChart2 className="nav-icon" /> {/* Replaced FiCompare */}
             {!isCollapsed && <span>Compare</span>}
           </Link>
         </li>
