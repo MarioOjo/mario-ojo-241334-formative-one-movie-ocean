@@ -11,7 +11,7 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
-import './ComparisonChart.css';
+
 
 // Register ChartJS components
 ChartJS.register(
