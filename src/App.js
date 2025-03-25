@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
-import HomePage from './pages/HomePage';
+import HomePage from './pages/HomePage'; // Corrected import to match the file name
 import ComparePage from './pages/ComparePage';
 import TopBoxOfficePage from './pages/TopBoxOfficePage';
 import MoviePage from './pages/MoviePage';
