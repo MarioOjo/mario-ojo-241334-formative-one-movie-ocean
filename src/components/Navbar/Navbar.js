@@ -26,24 +26,14 @@ const Navbar = () => {
             {!isCollapsed && <span>Home</span>}
           </Link>
         </li>
-        <li>
-          <Link to="/top-box-office" className="nav-link">
-            <FiTrendingUp className="nav-icon" />
-            {!isCollapsed && <span>Top Box Office</span>}
-          </Link>
-        </li>
+        
         <li>
           <Link to="/compare" className="nav-link">
             <FiBarChart2 className="nav-icon" /> {/* Replaced FiCompare */}
             {!isCollapsed && <span>Compare</span>}
           </Link>
         </li>
-        <li>
-          <Link to="/movie/example" className="nav-link">
-            <FiFilm className="nav-icon" />
-            {!isCollapsed && <span>Movie Details</span>}
-          </Link>
-        </li>
+       
       </ul>
     </nav>
   );
