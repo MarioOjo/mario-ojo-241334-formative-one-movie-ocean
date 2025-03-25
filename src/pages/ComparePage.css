@@ -1,0 +1,69 @@
+.compare-page {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .compare-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .back-link {
+    color: #4192fe;
+    text-decoration: none;
+  }
+  
+  .search-containers {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    margin: 2rem 0;
+  }
+  
+  .search-box {
+    flex: 1;
+    background: #2f333e;
+    padding: 1.5rem;
+    border-radius: 10px;
+  }
+  
+  .vs-circle {
+    width: 60px;
+    height: 60px;
+    background: #4192fe;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+  .selected-movie {
+    margin-top: 1rem;
+    text-align: center;
+  }
+  
+  .selected-movie img {
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .charts-container {
+    margin-top: 3rem;
+  }
+  
+  @media (max-width: 768px) {
+    .search-containers {
+      flex-direction: column;
+    }
+    
+    .vs-circle {
+      margin: 1rem 0;
+    }
+  }

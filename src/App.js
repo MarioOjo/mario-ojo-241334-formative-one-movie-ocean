@@ -1,21 +1,25 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Navbar from './components/Navbar'; // Navbar for navigation
-import Home from './components/pages/Home'; // Home page
-import Compare from './components/pages/Compare'; // Compare page
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar/Navbar';
+import HomePage from './pages/HomePage';
+import ComparePage from './pages/ComparePage';
+import TopBoxOfficePage from './pages/TopBoxOfficePage';
+import MoviePage from './pages/MoviePage';
 import './App.css';
 
 function App() {
   return (
     <Router>
-      <div className="App">
-        <Navbar /> {/* Include the Navbar */}
-        <header className="App-header">
+      <div className="app-container">
+        <Navbar />
+        <main className="main-content">
           <Routes>
-            <Route path="/" element={<Home />} /> {/* Route for Home page */}
-            <Route path="/compare" element={<Compare />} /> {/* Route for Compare page */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/compare" element={<ComparePage />} />
+            <Route path="/top-box-office" element={<TopBoxOfficePage />} />
+            <Route path="/movie/:id" element={<MoviePage />} />
           </Routes>
-        </header>
+        </main>
       </div>
     </Router>
   );
