@@ -1,0 +1,239 @@
+/* Base Styles */
+.homepage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(270deg, #574E3F 18.5%, #8A8A64 84%, #BDBD88 100%);
+  color: #ffffff;
+  box-sizing: border-box;
+}
+
+/* Header */
+.homepage h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Search Container */
+.search-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 2rem;
+}
+
+.search-container input {
+  padding: 12px 20px;
+  width: 100%;
+  border-radius: 30px;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.search-container input:focus {
+  outline: none;
+  box-shadow: 0 2px 15px rgba(75, 192, 192, 0.4);
+  background: white;
+}
+
+/* Button Group */
+.button-group {
+  display: flex;
+  gap: 15px;
+  margin-top: 15px;
+  width: 100%;
+}
+
+.button-group button {
+  flex: 1;
+  padding: 12px 0;
+  border-radius: 30px;
+  border: none;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.button-group button:first-child {
+  background-color: #4bc0c0;
+  color: white;
+}
+
+.button-group button:first-child:hover {
+  background-color: #3aa9a9;
+  transform: translateY(-2px);
+}
+
+.compare-button {
+  background-color: #ff6b6b;
+  color: white;
+}
+
+.compare-button:hover {
+  background-color: #ff5252;
+  transform: translateY(-2px);
+}
+
+/* Loading States */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  gap: 1.5rem;
+}
+
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border-left-color: #4bc0c0;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Movie Data Container */
+.movie-data-container {
+  width: 100%;
+  max-width: 900px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  margin-top: 1rem;
+}
+
+.movie-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.movie-header h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+}
+
+.release-year {
+  color: #a1a1a1;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.movie-poster {
+  border-radius: 10px;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  max-width: 300px;
+  width: 100%;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.movie-poster:hover {
+  transform: scale(1.03);
+}
+
+/* Chart Container */
+.chart-container {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Error and No Results */
+.error-message {
+  color: #ff6b6b;
+  text-align: center;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(255, 107, 107, 0.1);
+  border-radius: 8px;
+  max-width: 600px;
+  width: 100%;
+}
+
+.no-results {
+  text-align: center;
+  color: #a1a1a1;
+  padding: 2rem;
+  font-size: 1.2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  margin-top: 2rem;
+  max-width: 600px;
+  width: 100%;
+}
+
+/* Disabled States */
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .homepage {
+    padding: 1.5rem;
+  }
+  
+  .homepage h1 {
+    font-size: 2rem;
+  }
+  
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .movie-data-container {
+    padding: 1.5rem;
+  }
+  
+  .movie-poster {
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .homepage {
+    padding: 1rem;
+  }
+  
+  .homepage h1 {
+    font-size: 1.8rem;
+  }
+  
+  .search-container input {
+    padding: 10px 15px;
+  }
+  
+  .chart-container {
+    padding: 1rem;
+  }
+}

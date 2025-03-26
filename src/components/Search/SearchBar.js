@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 
-const SearchBar = ({ onSearch }) => {
+const SearchBar = ({ onSearch, placeholder = "Search for a movie..." }) => {
   const [query, setQuery] = useState('');
 
-  const handleSearch = () => {
-    onSearch(query); // Pass the search query to the parent component
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      onSearch(query);
+    }
   };
 
   return (
-    <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
+    <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
       <input
         type="text"
-        placeholder="Search for a movie..."
+        placeholder={placeholder}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        onKeyPress={handleKeyPress}
         style={{
           padding: '10px',
           width: '300px',
@@ -22,10 +25,9 @@ const SearchBar = ({ onSearch }) => {
         }}
       />
       <button
-        onClick={handleSearch}
+        onClick={() => onSearch(query)}
         style={{
           padding: '10px 20px',
-          marginLeft: '10px',
           borderRadius: '5px',
           backgroundColor: '#4bc0c0',
           color: 'white',

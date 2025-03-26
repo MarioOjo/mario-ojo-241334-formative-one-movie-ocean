@@ -1,26 +1,28 @@
 import React from 'react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 
-const BarChart = ({ data, title }) => {
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+const BarChart = ({ data, options }) => {
   return (
-    <div style={{ height: '300px', width: '100%' }}>
-      <h3>{title}</h3>
-      <Bar
-        data={data}
-        options={{
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: 'Value',
-              },
-            },
-          },
-        }}
-      />
+    <div style={{ height: '400px', width: '100%' }}>
+      <Bar data={data} options={options} />
     </div>
   );
 };
