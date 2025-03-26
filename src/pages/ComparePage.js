@@ -1,20 +1,16 @@
+// ComparePage.js
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import SearchBar from '../components/Search/SearchBar';
-import BarChart from '../components/Charts/BarChart'; // Add this import
-import RadarChart from '../components/Charts/RadarChart'; // Add this import
+import BarChart from '../components/Charts/BarChart';
 import './ComparePage.css';
 
-// Register Chart.js components at the top
+// Register Chart.js components
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
-  RadialLinearScale,
-  PointElement,
-  LineElement,
-  Filler,
   Tooltip,
   Legend,
   Title
@@ -24,10 +20,6 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
-  RadialLinearScale,
-  PointElement,
-  LineElement,
-  Filler,
   Tooltip,
   Legend,
   Title
@@ -38,112 +30,69 @@ const ComparePage = () => {
 
   const handleMovieSelect = (movie, index) => {
     const newMovies = [...movies];
-    newMovies[index] = movie;
+    newMovies[index] = {
+      ...movie,
+      profit: movie.revenue - movie.budget
+    };
     setMovies(newMovies);
   };
 
-  // Define chart data before using in JSX
-  const barChartData = movies[0] && movies[1] ? {
-    labels: ['Budget ($M)', 'Revenue ($M)', 'Profit ($M)'],
-    datasets: [
-      {
-        label: movies[0].title || 'Movie 1',
-        data: [
-          movies[0].budget / 1000000 || 0,
-          movies[0].revenue / 1000000 || 0,
-          (movies[0].revenue - movies[0].budget) / 1000000 || 0,
-        ],
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1,
-      },
-      {
-        label: movies[1].title || 'Movie 2',
-        data: [
-          movies[1].budget / 1000000 || 0,
-          movies[1].revenue / 1000000 || 0,
-          (movies[1].revenue - movies[1].budget) / 1000000 || 0,
-        ],
-        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-        borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 1,
-      },
-    ],
-  } : null;
+  // Format currency
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
 
-  const radarChartData = movies[0] && movies[1] ? {
-    labels: ['Rating', 'Popularity', 'Runtime', 'Vote Count'],
-    datasets: [
-      {
-        label: movies[0].title || 'Movie 1',
+  // Create chart data for individual movie
+  const createMovieChartData = (movie) => {
+    return {
+      labels: ['Budget', 'Revenue', 'Profit'],
+      datasets: [{
+        label: 'Financials',
         data: [
-          movies[0].vote_average || 0,
-          movies[0].popularity || 0,
-          movies[0].runtime || 0,
-          movies[0].vote_count || 0,
+          movie?.budget || 0,
+          movie?.revenue || 0,
+          movie?.profit || 0
         ],
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 2,
-      },
-      {
-        label: movies[1].title || 'Movie 2',
-        data: [
-          movies[1].vote_average || 0,
-          movies[1].popularity || 0,
-          movies[1].runtime || 0,
-          movies[1].vote_count || 0,
+        backgroundColor: [
+          'rgba(54, 162, 235, 0.6)',
+          'rgba(75, 192, 192, 0.6)',
+          'rgba(153, 102, 255, 0.6)'
         ],
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 2,
-      },
-    ],
-  } : null;
+        borderColor: [
+          'rgba(54, 162, 235, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)'
+        ],
+        borderWidth: 1
+      }]
+    };
+  };
 
-  // Define chart options
-  const barChartOptions = {
+  const chartOptions = {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top',
+        display: false
       },
-      title: {
-        display: true,
-        text: 'Financial Comparison ($M)',
-      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            return formatCurrency(context.raw);
+          }
+        }
+      }
     },
     scales: {
       y: {
         beginAtZero: true,
-        title: {
-          display: true,
-          text: 'Millions (USD)'
-        }
-      }
-    }
-  };
-
-  const radarChartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Performance Metrics Comparison',
-      },
-    },
-    scales: {
-      r: {
-        angleLines: {
-          display: true,
-          color: 'rgba(255, 255, 255, 0.1)'
-        },
-        suggestedMin: 0,
-        pointLabels: {
-          color: '#333'
+        ticks: {
+          callback: function(value) {
+            return formatCurrency(value);
+          }
         }
       }
     }
@@ -157,51 +106,124 @@ const ComparePage = () => {
       </div>
 
       <div className="search-containers">
-        {/* First Movie Search */}
-        <div className="search-box">
-          <h3>First Movie</h3>
-          <SearchBar onSelect={(movie) => handleMovieSelect(movie, 0)} />
+        {/* First Movie */}
+        <div className="movie-column">
+          <div className="search-box">
+            <h3>First Movie</h3>
+            <SearchBar 
+              onSearch={(movie) => handleMovieSelect(movie, 0)} 
+              placeholder="Search first movie..."
+            />
+            {movies[0] && (
+              <div className="selected-movie">
+                <img 
+                  src={movies[0].poster_path || 'https://via.placeholder.com/200x300?text=No+Poster'} 
+                  alt={movies[0].title}
+                  className="movie-poster"
+                />
+                <div className="movie-info">
+                  <h4>{movies[0].title}</h4>
+                  {movies[0].release_date && (
+                    <p>({new Date(movies[0].release_date).getFullYear()})</p>
+                  )}
+                  <p className="movie-tagline">{movies[0].tagline}</p>
+                  <p className="movie-overview">{movies[0].overview}</p>
+                  <div className="movie-stats">
+                    <div className="stat-box">
+                      <span>WEEKEND GROSS</span>
+                      <span>{formatCurrency(movies[0].weekend_gross || 0)}</span>
+                    </div>
+                    <div className="stat-box">
+                      <span>TOTAL GROSS</span>
+                      <span>{formatCurrency(movies[0].revenue || 0)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           {movies[0] && (
-            <div className="selected-movie">
-              <img 
-                src={movies[0].poster_path 
-                  ? `https://image.tmdb.org/t/p/w200${movies[0].poster_path}` 
-                  : 'https://via.placeholder.com/200x300?text=No+Image'} 
-                alt={movies[0].title || 'No Title'}
+            <div className="chart-container">
+              <h4>Financial Performance</h4>
+              <BarChart 
+                data={createMovieChartData(movies[0])} 
+                options={chartOptions} 
+                height={300}
               />
-              <h4>{movies[0].title || 'Unknown Title'}</h4>
             </div>
           )}
         </div>
 
         <div className="vs-circle">VS</div>
 
-        {/* Second Movie Search */}
-        <div className="search-box">
-          <h3>Second Movie</h3>
-          <SearchBar onSelect={(movie) => handleMovieSelect(movie, 1)} />
+        {/* Second Movie */}
+        <div className="movie-column">
+          <div className="search-box">
+            <h3>Second Movie</h3>
+            <SearchBar 
+              onSearch={(movie) => handleMovieSelect(movie, 1)} 
+              placeholder="Search second movie..."
+            />
+            {movies[1] && (
+              <div className="selected-movie">
+                <img 
+                  src={movies[1].poster_path || 'https://via.placeholder.com/200x300?text=No+Poster'} 
+                  alt={movies[1].title}
+                  className="movie-poster"
+                />
+                <div className="movie-info">
+                  <h4>{movies[1].title}</h4>
+                  {movies[1].release_date && (
+                    <p>({new Date(movies[1].release_date).getFullYear()})</p>
+                  )}
+                  <p className="movie-tagline">{movies[1].tagline}</p>
+                  <p className="movie-overview">{movies[1].overview}</p>
+                  <div className="movie-stats">
+                    <div className="stat-box">
+                      <span>WEEKEND GROSS</span>
+                      <span>{formatCurrency(movies[1].weekend_gross || 0)}</span>
+                    </div>
+                    <div className="stat-box">
+                      <span>TOTAL GROSS</span>
+                      <span>{formatCurrency(movies[1].revenue || 0)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           {movies[1] && (
-            <div className="selected-movie">
-              <img 
-                src={movies[1].poster_path 
-                  ? `https://image.tmdb.org/t/p/w200${movies[1].poster_path}` 
-                  : 'https://via.placeholder.com/200x300?text=No+Image'} 
-                alt={movies[1].title || 'No Title'}
+            <div className="chart-container">
+              <h4>Financial Performance</h4>
+              <BarChart 
+                data={createMovieChartData(movies[1])} 
+                options={chartOptions} 
+                height={300}
               />
-              <h4>{movies[1].title || 'Unknown Title'}</h4>
             </div>
           )}
         </div>
       </div>
 
-      {/* Charts - Only show when both movies are selected */}
+      {/* Comparison Summary */}
       {movies[0] && movies[1] && (
-        <div className="charts-container">
-          <div className="chart-wrapper">
-            <BarChart data={barChartData} options={barChartOptions} />
-          </div>
-          <div className="chart-wrapper">
-            <RadarChart data={radarChartData} options={radarChartOptions} />
+        <div className="comparison-summary">
+          <h3>Key Differences</h3>
+          <div className="difference-grid">
+            <div className="difference-item">
+              <span>Budget Difference</span>
+              <span>{formatCurrency(Math.abs(movies[0].budget - movies[1].budget))}</span>
+            </div>
+            <div className="difference-item">
+              <span>Revenue Difference</span>
+              <span>{formatCurrency(Math.abs(movies[0].revenue - movies[1].revenue))}</span>
+            </div>
+            <div className="difference-item">
+              <span>Profit Difference</span>
+              <span>{formatCurrency(Math.abs(movies[0].profit - movies[1].profit))}</span>
+            </div>
           </div>
         </div>
       )}

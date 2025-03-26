@@ -1,75 +1,182 @@
+/* ComparePage.css */
 .compare-page {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: linear-gradient(270deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: #fff;
+}
+
+.compare-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.back-link {
+  color: #4bc0c0;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.back-link:hover {
+  color: #3aa9a9;
+}
+
+.search-containers {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.movie-column {
+  flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
+}
+
+.search-box {
+  background: #2d2d2d;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.vs-circle {
+  width: 60px;
+  height: 60px;
+  background: #4bc0c0;
+  color: white;
+  border-radius: 50%;
+  display: flex;
   align-items: center;
-  min-height: 100vh;
-  padding: 2rem;
-  font-family: 'Arial', sans-serif;
-  background: linear-gradient(270deg, #574E3F 18.5%, #8A8A64 84%, #BDBD88 100%);
-  color: #ffffff;
-  box-sizing: border-box;
-  }
-  
-  .compare-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-  }
-  
-  .back-link {
-    color: #4192fe;
-    text-decoration: none;
-  }
-  
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  align-self: center;
+}
+
+.selected-movie {
+  margin-top: 1rem;
+}
+
+.movie-poster {
+  width: 100%;
+  max-width: 250px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  margin-bottom: 1rem;
+}
+
+.movie-info h4 {
+  margin: 0.5rem 0;
+  font-size: 1.4rem;
+  color: #fff;
+}
+
+.movie-info p {
+  margin: 0.5rem 0;
+  color: #ccc;
+}
+
+.movie-tagline {
+  font-style: italic;
+  color: #4bc0c0 !important;
+}
+
+.movie-overview {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.movie-stats {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.stat-box {
+  background: rgba(75, 192, 192, 0.1);
+  padding: 0.8rem;
+  border-radius: 6px;
+  text-align: center;
+  flex: 1;
+}
+
+.stat-box span:first-child {
+  display: block;
+  font-size: 0.8rem;
+  color: #aaa;
+  margin-bottom: 0.3rem;
+}
+
+.stat-box span:last-child {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #4bc0c0;
+}
+
+.chart-container {
+  background: #2d2d2d;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.chart-container h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.comparison-summary {
+  margin-top: 2rem;
+  background: #2d2d2d;
+  padding: 1.5rem;
+  border-radius: 10px;
+}
+
+.difference-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.difference-item {
+  background: rgba(75, 192, 192, 0.1);
+  padding: 1rem;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.difference-item span:first-child {
+  display: block;
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-bottom: 0.5rem;
+}
+
+.difference-item span:last-child {
+  font-weight: bold;
+  color: #4bc0c0;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
   .search-containers {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2rem;
-    margin: 2rem 0;
+    flex-direction: column;
   }
-  
-  .search-box {
-    flex: 1;
-    background: #2f333e;
-    padding: 1.5rem;
-    border-radius: 10px;
-  }
-  
+
   .vs-circle {
-    width: 60px;
-    height: 60px;
-    background: #4192fe;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 1.2rem;
+    margin: 1rem 0;
   }
-  
-  .selected-movie {
-    margin-top: 1rem;
-    text-align: center;
+
+  .difference-grid {
+    grid-template-columns: 1fr;
   }
-  
-  .selected-movie img {
-    border-radius: 5px;
-    margin-bottom: 0.5rem;
-  }
-  
-  .charts-container {
-    margin-top: 3rem;
-  }
-  
-  @media (max-width: 768px) {
-    .search-containers {
-      flex-direction: column;
-    }
-    
-    .vs-circle {
-      margin: 1rem 0;
-    }
-  }
+}

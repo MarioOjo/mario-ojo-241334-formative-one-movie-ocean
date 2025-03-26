@@ -33,38 +33,81 @@ ChartJS.register(
   Title
 );
 
-const API_URL = "https://Movies-Verse.proxy-production.allthingsdev.co/api/movies/search";
-const API_HEADERS = {
-  "x-apihub-key": "YDoVJUPRVRQPoDRzkuiuccJDV1-6FgluIpO3QSuoFPSdQMW174",
-  "x-apihub-host": "Movies-Verse.allthingsdev.co",
-  "x-apihub-endpoint": "5122e0f8-a949-45a9-aedf-5eaf61c6085b"
+// TMDB API configuration
+const API_KEY = 'bf12ff0542145f969307e128eae46673';
+const BASE_URL = 'https://api.themoviedb.org/3';
+const DEFAULT_MOVIE_ID = 603; // The Matrix movie ID
+
+const fetchMovieById = async (movieId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/movie/${movieId}`, {
+      params: {
+        api_key: API_KEY,
+        append_to_response: 'release_dates'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching movie:', error);
+    throw error;
+  }
 };
 
-// Configurable default movie
-const DEFAULT_MOVIE_QUERY = "The Matrix"; // Change this to any default movie you want
+const searchMovies = async (query) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/search/movie`, {
+      params: {
+        api_key: API_KEY,
+        query: query,
+        language: 'en-US',
+        page: 1
+      }
+    });
+    return response.data.results;
+  } catch (error) {
+    console.error('Error searching movies:', error);
+    throw error;
+  }
+};
 
 const HomePage = () => {
   const [movie, setMovie] = useState(null);
-  const [loading, setLoading] = useState(true); // Start with true for initial load
-  const [initialLoad, setInitialLoad] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
 
-  const fetchMovie = async (searchQuery) => {
+  const fetchMovie = async (movieIdOrQuery) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(
-        `${API_URL}?query=${encodeURIComponent(searchQuery)}`,
-        { headers: API_HEADERS }
-      );
+      let movieData;
+      // Check if it's an ID (number) or search query (string)
+      if (typeof movieIdOrQuery === 'number') {
+        movieData = await fetchMovieById(movieIdOrQuery);
+      } else {
+        const results = await searchMovies(movieIdOrQuery);
+        movieData = results.length > 0 ? await fetchMovieById(results[0].id) : null;
+      }
       
-      if (response.data.results?.length > 0) {
-        setMovie(response.data.results[0]);
+      if (movieData) {
+        setMovie({
+          ...movieData,
+          // Normalize the data structure
+          budget: movieData.budget,
+          revenue: movieData.revenue,
+          vote_average: movieData.vote_average,
+          vote_count: movieData.vote_count,
+          runtime: movieData.runtime,
+          popularity: movieData.popularity,
+          poster_path: movieData.poster_path 
+            ? `https://image.tmdb.org/t/p/w500${movieData.poster_path}`
+            : null,
+          release_date: movieData.release_date
+        });
       } else {
         setMovie(null);
-        setError(`No movies found for "${searchQuery}"`);
+        setError(`No movies found for "${movieIdOrQuery}"`);
       }
     } catch (error) {
       console.error("Error fetching movie:", error);
@@ -72,13 +115,12 @@ const HomePage = () => {
       setMovie(null);
     } finally {
       setLoading(false);
-      setInitialLoad(false);
     }
   };
 
-  // Load default movie on initial render
+  // Load default movie immediately on component mount
   useEffect(() => {
-    fetchMovie(DEFAULT_MOVIE_QUERY);
+    fetchMovie(DEFAULT_MOVIE_ID);
   }, []);
 
   const handleSearch = () => {
@@ -97,80 +139,72 @@ const HomePage = () => {
     navigate('/compare');
   };
 
-  // Chart data
-  const barChartData = movie ? {
-    labels: ['Budget ($M)', 'Revenue ($M)', 'Profit ($M)'],
-    datasets: [{
-      label: movie.title || 'N/A',
-      data: [
-        movie.budget / 1000000 || 0,
-        movie.revenue / 1000000 || 0,
-        (movie.revenue - movie.budget) / 1000000 || 0,
-      ],
-      backgroundColor: 'rgba(75, 192, 192, 0.6)',
-      borderColor: 'rgba(75, 192, 192, 1)',
-      borderWidth: 1,
-    }],
-  } : null;
+  // Memoized chart data
+  const chartData = React.useMemo(() => {
+    if (!movie) return { barChartData: null, radarChartData: null };
 
-  const radarChartData = movie ? {
-    labels: ['Rating', 'Popularity', 'Runtime', 'Vote Count'],
-    datasets: [{
-      label: movie.title || 'N/A',
-      data: [
-        movie.vote_average || 0,
-        movie.popularity || 0,
-        movie.runtime || 0,
-        movie.vote_count || 0,
-      ],
-      backgroundColor: 'rgba(75, 192, 192, 0.2)',
-      borderColor: 'rgba(75, 192, 192, 1)',
-      borderWidth: 2,
-    }],
-  } : null;
+    const barChartData = {
+      labels: ['Budget ($M)', 'Revenue ($M)', 'Profit ($M)'],
+      datasets: [{
+        label: movie.title || 'N/A',
+        data: [
+          movie.budget / 1000000 || 0,
+          movie.revenue / 1000000 || 0,
+          (movie.revenue - movie.budget) / 1000000 || 0,
+        ],
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1,
+      }],
+    };
+
+    const radarChartData = {
+      labels: ['Rating', 'Popularity', 'Runtime', 'Vote Count'],
+      datasets: [{
+        label: movie.title || 'N/A',
+        data: [
+          movie.vote_average || 0,
+          movie.popularity || 0,
+          movie.runtime || 0,
+          movie.vote_count || 0,
+        ],
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 2,
+      }],
+    };
+
+    return { barChartData, radarChartData };
+  }, [movie]);
 
   // Chart options
-  const barChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'top',
+  const chartOptions = {
+    barChartOptions: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top' },
+        title: { display: true, text: 'Financial Metrics' },
       },
-      title: {
-        display: true,
-        text: 'Financial Metrics',
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: 'Millions (USD)'
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: 'Millions (USD)' }
         }
       }
-    }
-  };
-
-  const radarChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Performance Metrics',
-      },
     },
-    scales: {
-      r: {
-        angleLines: { display: true },
-        suggestedMin: 0,
-        pointLabels: {
-          color: '#333'
+    radarChartOptions: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top' },
+        title: { display: true, text: 'Performance Metrics' },
+      },
+      scales: {
+        r: {
+          angleLines: { display: true },
+          suggestedMin: 0,
+          pointLabels: { color: '#333' }
         }
       }
     }
@@ -209,15 +243,10 @@ const HomePage = () => {
 
       {error && <p className="error-message">{error}</p>}
 
-      {initialLoad ? (
+      {loading ? (
         <div className="loading-state">
           <div className="spinner"></div>
-          <p>Loading {DEFAULT_MOVIE_QUERY}...</p>
-        </div>
-      ) : loading ? (
-        <div className="loading-state">
-          <div className="spinner"></div>
-          <p>Loading movie data...</p>
+          <p>Loading {movie ? 'search results' : 'The Matrix'}...</p>
         </div>
       ) : movie ? (
         <div className="movie-data-container">
@@ -230,19 +259,25 @@ const HomePage = () => {
             )}
             {movie.poster_path && (
               <img 
-                src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
+                src={movie.poster_path}
                 alt={`${movie.title} poster`}
                 className="movie-poster"
                 onError={(e) => {
-                  e.target.src = 'https://via.placeholder.com/300x450?text=Poster+Not+Available';
+                  e.target.src = 'https://via.placeholder.com/500x750?text=Poster+Not+Available';
                 }}
               />
             )}
           </div>
           
           <div className="chart-container">
-            <BarChart data={barChartData} options={barChartOptions} />
-            <RadarChart data={radarChartData} options={radarChartOptions} />
+            <BarChart 
+              data={chartData.barChartData} 
+              options={chartOptions.barChartOptions} 
+            />
+            <RadarChart 
+              data={chartData.radarChartData} 
+              options={chartOptions.radarChartOptions} 
+            />
           </div>
         </div>
       ) : (
