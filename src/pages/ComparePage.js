@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
-import axios from 'axios';
+import { searchMovies, fetchMovieDetails } from './api';
 import './ComparePage.css';
 import {
   Chart as ChartJS,
@@ -12,7 +12,6 @@ import {
   Legend
 } from 'chart.js';
 
-// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -22,163 +21,164 @@ ChartJS.register(
   Legend
 );
 
-// API Configuration
-const API_URL = 'https://api.themoviedb.org/3';
-const API_KEY = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiZjEyZmYwNTQyMTQ1Zjk2OTMwN2UxMjhlYWU0NjY3MyIsInN1YiI6IjY2ZTk1NjFlODJmZjg3M2Y3ZDFlYTZmMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Gi_-5IleLtUa4XCv8VwUkHKjJaQNwWPAVOw5Ed3LOUg';
-
 const ComparePage = () => {
   const [movies, setMovies] = useState([null, null]);
-  const [searchTerm, setSearchTerm] = useState(['', '']);
+  const [searchTerms, setSearchTerms] = useState(['', '']);
   const [searchResults, setSearchResults] = useState([[], []]);
   const [loading, setLoading] = useState({
     search: [false, false],
     details: [false, false]
   });
   const [activeTab, setActiveTab] = useState('financial');
+  const [differences, setDifferences] = useState(null);
 
-  // Search movies from TMDB API
-  const searchMovies = async (query, index) => {
+  // Load from localStorage on initial render
+  useEffect(() => {
+    const savedComparison = localStorage.getItem('movieComparison');
+    if (savedComparison) {
+      const { movies: savedMovies, terms } = JSON.parse(savedComparison);
+      setMovies(savedMovies);
+      setSearchTerms(terms);
+    }
+  }, []);
+
+  // Save to localStorage when movies change
+  useEffect(() => {
+    if (movies.some(m => m !== null)) {
+      localStorage.setItem('movieComparison', JSON.stringify({
+        movies,
+        terms: searchTerms
+      }));
+    }
+  }, [movies, searchTerms]);
+
+  // Calculate differences when movies change
+  useEffect(() => {
+    if (movies[0] && movies[1]) {
+      calculateDifferences();
+    } else {
+      setDifferences(null);
+    }
+  }, [movies]);
+
+  const searchMoviesHandler = async (query, index) => {
     if (!query.trim()) {
-      setSearchResults(prev => {
-        const newResults = [...prev];
-        newResults[index] = [];
-        return newResults;
-      });
+      updateSearchResults([], index);
       return;
     }
 
+    setLoading(prev => updateLoadingState(prev, 'search', index, true));
+    
     try {
-      setLoading(prev => ({
-        ...prev,
-        search: [...prev.search.slice(0, index), true, ...prev.search.slice(index + 1)]
-      }));
-
-      const response = await axios.get(`${API_URL}/search/movie`, {
-        params: {
-          query,
-          include_adult: false,
-          language: 'en-US',
-          page: 1
-        },
-        headers: {
-          accept: 'application/json',
-          Authorization: `Bearer ${API_KEY}`
-        }
-      });
-
-      setSearchResults(prev => {
-        const newResults = [...prev];
-        newResults[index] = response.data.results.slice(0, 5);
-        return newResults;
-      });
+      const results = await searchMovies(query);
+      updateSearchResults(results.slice(0, 5), index);
     } catch (error) {
-      console.error('Search error:', error);
+      console.error('Search failed:', error);
+      updateSearchResults([], index);
     } finally {
-      setLoading(prev => ({
-        ...prev,
-        search: [...prev.search.slice(0, index), false, ...prev.search.slice(index + 1)]
-      }));
+      setLoading(prev => updateLoadingState(prev, 'search', index, false));
     }
   };
 
-  // Fetch complete movie details
-  const fetchMovieDetails = async (movieId, index) => {
+  const handleMovieSelect = async (movieId, index) => {
+    setLoading(prev => updateLoadingState(prev, 'details', index, true));
+    
     try {
-      setLoading(prev => ({
-        ...prev,
-        details: [...prev.details.slice(0, index), true, ...prev.details.slice(index + 1)]
-      }));
-
-      const [detailsResponse, creditsResponse] = await Promise.all([
-        axios.get(`${API_URL}/movie/${movieId}`, {
-          headers: {
-            accept: 'application/json',
-            Authorization: `Bearer ${API_KEY}`
-          }
-        }),
-        axios.get(`${API_URL}/movie/${movieId}/credits`, {
-          headers: {
-            accept: 'application/json',
-            Authorization: `Bearer ${API_KEY}`
-          }
-        })
-      ]);
-
-      const movieData = {
-        id: detailsResponse.data.id,
-        title: detailsResponse.data.title,
-        poster_path: detailsResponse.data.poster_path 
-          ? `https://image.tmdb.org/t/p/w500${detailsResponse.data.poster_path}`
-          : 'https://via.placeholder.com/500x750?text=No+Poster',
-        release_date: detailsResponse.data.release_date,
-        tagline: detailsResponse.data.tagline || '',
-        overview: detailsResponse.data.overview,
-        budget: detailsResponse.data.budget || 0,
-        revenue: detailsResponse.data.revenue || 0,
-        // Estimate weekend gross as 30% of total revenue
-        weekend_gross: Math.floor((detailsResponse.data.revenue || 0) * 0.3),
-        vote_average: detailsResponse.data.vote_average,
-        vote_count: detailsResponse.data.vote_count,
-        runtime: detailsResponse.data.runtime || 0,
-        director: creditsResponse.data.crew.find(person => person.job === 'Director')?.name || 'Unknown'
-      };
-
+      const movieData = await fetchMovieDetails(movieId);
+      const normalizedData = normalizeMovieData(movieData);
+      
       setMovies(prev => {
         const newMovies = [...prev];
-        newMovies[index] = {
-          ...movieData,
-          profit: movieData.revenue - movieData.budget
-        };
+        newMovies[index] = normalizedData;
         return newMovies;
       });
-
-      // Clear search results after selection
-      setSearchResults(prev => {
-        const newResults = [...prev];
-        newResults[index] = [];
-        return newResults;
-      });
-
-      // Reset search term to selected movie title
-      setSearchTerm(prev => {
+      
+      updateSearchResults([], index);
+      setSearchTerms(prev => {
         const newTerms = [...prev];
-        newTerms[index] = movieData.title;
+        newTerms[index] = normalizedData.title;
         return newTerms;
       });
     } catch (error) {
-      console.error('Error fetching movie details:', error);
+      console.error('Failed to load movie:', error);
     } finally {
-      setLoading(prev => ({
-        ...prev,
-        details: [...prev.details.slice(0, index), false, ...prev.details.slice(index + 1)]
-      }));
+      setLoading(prev => updateLoadingState(prev, 'details', index, false));
     }
   };
 
-  const handleSearchChange = (e, index) => {
-    const value = e.target.value;
-    setSearchTerm(prev => {
-      const newTerms = [...prev];
-      newTerms[index] = value;
-      return newTerms;
+  const calculateDifferences = () => {
+    const movie1 = movies[0];
+    const movie2 = movies[1];
+    
+    setDifferences({
+      budget: movie2.budget - movie1.budget,
+      revenue: movie2.revenue - movie1.revenue,
+      profit: movie2.profit - movie1.profit,
+      rating: movie2.vote_average - movie1.vote_average,
+      runtime: movie2.runtime - movie1.runtime,
+      year: new Date(movie2.release_date).getFullYear() - 
+           new Date(movie1.release_date).getFullYear()
     });
-    searchMovies(value, index);
   };
 
-  // Format currency in millions
+  const swapMovies = () => {
+    setMovies([movies[1], movies[0]]);
+    setSearchTerms([searchTerms[1], searchTerms[0]]);
+  };
+
+  const clearComparison = () => {
+    setMovies([null, null]);
+    setSearchTerms(['', '']);
+    setSearchResults([[], []]);
+    localStorage.removeItem('movieComparison');
+  };
+
+  // Helper functions
+  const updateSearchResults = (results, index) => {
+    setSearchResults(prev => {
+      const newResults = [...prev];
+      newResults[index] = results;
+      return newResults;
+    });
+  };
+
+  const updateLoadingState = (prev, type, index, value) => {
+    const newState = {...prev};
+    newState[type] = [...newState[type]];
+    newState[type][index] = value;
+    return newState;
+  };
+
+  const normalizeMovieData = (data) => ({
+    id: data.id,
+    title: data.title,
+    poster_path: data.poster_path 
+      ? `https://image.tmdb.org/t/p/w500${data.poster_path}`
+      : 'https://via.placeholder.com/500x750?text=No+Poster',
+    release_date: data.release_date,
+    tagline: data.tagline || '',
+    overview: data.overview,
+    budget: data.budget || 0,
+    revenue: data.revenue || 0,
+    vote_average: data.vote_average,
+    vote_count: data.vote_count,
+    runtime: data.runtime || 0,
+    genres: data.genres?.map(g => g.name) || [],
+    director: data.director,
+    profit: (data.revenue || 0) - (data.budget || 0)
+  });
+
   const formatCurrency = (amount) => {
     if (amount === 0 || amount === null) return '$0M';
     return `$${(amount / 1000000).toFixed(1)}M`;
   };
 
-  // Format runtime
   const formatRuntime = (minutes) => {
     const hrs = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return `${hrs}h ${mins}m`;
   };
 
-  // Render star rating
   const renderRating = (rating) => {
     const fullStars = Math.floor(rating / 2);
     const halfStar = rating % 2 >= 1 ? '½' : '';
@@ -194,36 +194,29 @@ const ComparePage = () => {
     );
   };
 
-  // Create chart data
-  const createChartData = (type, movie) => {
-    if (!movie) return null;
+  const createComparisonChartData = () => {
+    if (!movies[0] || !movies[1]) return null;
     
-    switch (type) {
-      case 'financial':
-        return {
-          labels: ['Budget', 'Revenue', 'Profit'],
-          datasets: [{
-            label: 'USD',
-            data: [movie.budget, movie.revenue, movie.profit],
-            backgroundColor: ['#4bc0c0', '#36a2eb', '#ff6384']
-          }]
-        };
-      case 'performance':
-        return {
-          labels: ['Rating', 'Votes', 'Runtime'],
-          datasets: [{
-            label: 'Metrics',
-            data: [
-              movie.vote_average * 10, // Scale to 100 for chart
-              Math.min(movie.vote_count / 10000, 100), // Scale votes
-              movie.runtime
+    const labels = activeTab === 'financial'
+      ? ['Budget', 'Revenue', 'Profit']
+      : ['Rating', 'Votes', 'Runtime'];
+    
+    return {
+      labels,
+      datasets: movies.map((movie, index) => ({
+        label: movie?.title || '',
+        data: activeTab === 'financial'
+          ? [movie?.budget || 0, movie?.revenue || 0, movie?.profit || 0]
+          : [
+              (movie?.vote_average || 0) * 10,
+              Math.min((movie?.vote_count || 0) / 10000, 100),
+              movie?.runtime || 0
             ],
-            backgroundColor: ['#ff9f40', '#9966ff', '#ffcd56']
-          }]
-        };
-      default:
-        return null;
-    }
+        backgroundColor: index === 0 ? 'rgba(75, 192, 192, 0.6)' : 'rgba(255, 99, 132, 0.6)',
+        borderColor: index === 0 ? 'rgba(75, 192, 192, 1)' : 'rgba(255, 99, 132, 1)',
+        borderWidth: 1
+      }))
+    };
   };
 
   const chartOptions = {
@@ -231,24 +224,25 @@ const ComparePage = () => {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false
+        position: 'top',
       },
       tooltip: {
         callbacks: {
           label: function(context) {
+            let label = context.dataset.label || '';
+            let value = context.raw;
+            
             if (activeTab === 'financial') {
-              return formatCurrency(context.raw);
+              value = formatCurrency(value);
+            } else if (context.label === 'Rating') {
+              value = `${(value / 10).toFixed(1)}/10`;
+            } else if (context.label === 'Votes') {
+              value = `${(value * 10000).toLocaleString()} votes`;
+            } else if (context.label === 'Runtime') {
+              value = formatRuntime(value);
             }
-            if (context.label === 'Rating') {
-              return `${(context.raw / 10).toFixed(1)}/10`;
-            }
-            if (context.label === 'Votes') {
-              return `${(context.raw * 10000).toLocaleString()} votes`;
-            }
-            if (context.label === 'Runtime') {
-              return formatRuntime(context.raw);
-            }
-            return context.raw;
+            
+            return `${label}: ${value}`;
           }
         }
       }
@@ -272,169 +266,143 @@ const ComparePage = () => {
     <div className="compare-page">
       <div className="compare-header">
         <h1>Movie Comparison Tool</h1>
+        {movies[0] && movies[1] && (
+          <div className="comparison-actions">
+            <button onClick={swapMovies} className="action-button swap">
+              Swap Movies
+            </button>
+            <button onClick={clearComparison} className="action-button clear">
+              Clear Comparison
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="search-containers">
-        {/* First Movie Column */}
-        <div className="movie-column">
-          <div className="search-box">
-            <h3>First Movie</h3>
-            <div className="search-input-container">
-              <input
-                type="text"
-                value={searchTerm[0]}
-                onChange={(e) => handleSearchChange(e, 0)}
-                placeholder="Search first movie..."
-                className="search-input"
-              />
-              {loading.search[0] && <div className="search-loading">Searching...</div>}
+        {[0, 1].map(index => (
+          <div key={index} className="movie-column">
+            <div className="search-box">
+              <h3>Movie {index + 1}</h3>
+              <div className="search-input-container">
+                <input
+                  type="text"
+                  value={searchTerms[index]}
+                  onChange={(e) => {
+                    const newTerms = [...searchTerms];
+                    newTerms[index] = e.target.value;
+                    setSearchTerms(newTerms);
+                    searchMoviesHandler(e.target.value, index);
+                  }}
+                  placeholder={`Search movie ${index + 1}...`}
+                  className="search-input"
+                />
+                {loading.search[index] && <div className="search-loading">Searching...</div>}
+              </div>
+              {searchResults[index].length > 0 && (
+                <div className="search-results">
+                  {searchResults[index].map(movie => (
+                    <div 
+                      key={movie.id}
+                      className="result-item"
+                      onClick={() => handleMovieSelect(movie.id, index)}
+                    >
+                      {movie.title} ({movie.release_date?.substring(0, 4) || 'N/A'})
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-            {searchResults[0].length > 0 && (
-              <div className="search-results">
-                {searchResults[0].map(movie => (
-                  <div 
-                    key={movie.id}
-                    className="result-item"
-                    onClick={() => fetchMovieDetails(movie.id, 0)}
-                  >
-                    {movie.title} ({movie.release_date?.substring(0, 4) || 'N/A'})
+
+            {movies[index] && (
+              <div className="movie-display">
+                <div className="poster-column">
+                  <img 
+                    src={movies[index].poster_path} 
+                    alt={movies[index].title}
+                    className="movie-poster"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://via.placeholder.com/500x750?text=Poster+Not+Available';
+                    }}
+                  />
+                </div>
+                <div className="info-column">
+                  <h2 className="movie-title">{movies[index].title}</h2>
+                  <div className="movie-meta">
+                    <span>{new Date(movies[index].release_date).getFullYear()}</span>
+                    <span>•</span>
+                    <span>{formatRuntime(movies[index].runtime)}</span>
+                    <span>•</span>
+                    <span>{movies[index].director}</span>
                   </div>
-                ))}
+
+                  <div className="rating-container">
+                    {renderRating(movies[index].vote_average)}
+                    <span className="vote-count">({movies[index].vote_count.toLocaleString()} votes)</span>
+                  </div>
+
+                  {movies[index].tagline && <p className="tagline">"{movies[index].tagline}"</p>}
+
+                  <div className="overview-box">
+                    <h3>Overview</h3>
+                    <p>{movies[index].overview}</p>
+                  </div>
+
+                  <div className="stats-container">
+                    <div className="stat-box">
+                      <span className="stat-label">BUDGET</span>
+                      <span className="stat-value">{formatCurrency(movies[index].budget)}</span>
+                    </div>
+                    <div className="stat-box">
+                      <span className="stat-label">REVENUE</span>
+                      <span className="stat-value">{formatCurrency(movies[index].revenue)}</span>
+                    </div>
+                    <div className="stat-box">
+                      <span className="stat-label">PROFIT</span>
+                      <span className="stat-value">{formatCurrency(movies[index].profit)}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>
-
-          {movies[0] && (
-            <div className="movie-display">
-              <div className="poster-column">
-                <img 
-                  src={movies[0].poster_path} 
-                  alt={movies[0].title}
-                  className="movie-poster"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = 'https://via.placeholder.com/500x750?text=Poster+Not+Available';
-                  }}
-                />
-              </div>
-              <div className="info-column">
-                <h2 className="movie-title">{movies[0].title}</h2>
-                <div className="movie-meta">
-                  <span>{new Date(movies[0].release_date).getFullYear()}</span>
-                  <span>•</span>
-                  <span>{formatRuntime(movies[0].runtime)}</span>
-                  <span>•</span>
-                  <span>{movies[0].director}</span>
-                </div>
-
-                <div className="rating-container">
-                  {renderRating(movies[0].vote_average)}
-                  <span className="vote-count">({movies[0].vote_count.toLocaleString()} votes)</span>
-                </div>
-
-                {movies[0].tagline && <p className="tagline">"{movies[0].tagline}"</p>}
-
-                <div className="overview-box">
-                  <h3>Overview</h3>
-                  <p>{movies[0].overview}</p>
-                </div>
-
-                <div className="stats-container">
-                  <div className="stat-box">
-                    <span className="stat-label">WEEKEND GROSS</span>
-                    <span className="stat-value">{formatCurrency(movies[0].weekend_gross)}</span>
-                  </div>
-                  <div className="stat-box">
-                    <span className="stat-label">TOTAL GROSS</span>
-                    <span className="stat-value">{formatCurrency(movies[0].revenue)}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+        ))}
 
         <div className="vs-circle">VS</div>
-
-        {/* Second Movie Column */}
-        <div className="movie-column">
-          <div className="search-box">
-            <h3>Second Movie</h3>
-            <div className="search-input-container">
-              <input
-                type="text"
-                value={searchTerm[1]}
-                onChange={(e) => handleSearchChange(e, 1)}
-                placeholder="Search second movie..."
-                className="search-input"
-              />
-              {loading.search[1] && <div className="search-loading">Searching...</div>}
-            </div>
-            {searchResults[1].length > 0 && (
-              <div className="search-results">
-                {searchResults[1].map(movie => (
-                  <div 
-                    key={movie.id}
-                    className="result-item"
-                    onClick={() => fetchMovieDetails(movie.id, 1)}
-                  >
-                    {movie.title} ({movie.release_date?.substring(0, 4) || 'N/A'})
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {movies[1] && (
-            <div className="movie-display">
-              <div className="poster-column">
-                <img 
-                  src={movies[1].poster_path} 
-                  alt={movies[1].title}
-                  className="movie-poster"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = 'https://via.placeholder.com/500x750?text=Poster+Not+Available';
-                  }}
-                />
-              </div>
-              <div className="info-column">
-                <h2 className="movie-title">{movies[1].title}</h2>
-                <div className="movie-meta">
-                  <span>{new Date(movies[1].release_date).getFullYear()}</span>
-                  <span>•</span>
-                  <span>{formatRuntime(movies[1].runtime)}</span>
-                  <span>•</span>
-                  <span>{movies[1].director}</span>
-                </div>
-
-                <div className="rating-container">
-                  {renderRating(movies[1].vote_average)}
-                  <span className="vote-count">({movies[1].vote_count.toLocaleString()} votes)</span>
-                </div>
-
-                {movies[1].tagline && <p className="tagline">"{movies[1].tagline}"</p>}
-
-                <div className="overview-box">
-                  <h3>Overview</h3>
-                  <p>{movies[1].overview}</p>
-                </div>
-
-                <div className="stats-container">
-                  <div className="stat-box">
-                    <span className="stat-label">WEEKEND GROSS</span>
-                    <span className="stat-value">{formatCurrency(movies[1].weekend_gross)}</span>
-                  </div>
-                  <div className="stat-box">
-                    <span className="stat-label">TOTAL GROSS</span>
-                    <span className="stat-value">{formatCurrency(movies[1].revenue)}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
       </div>
+
+      {/* Differences Summary */}
+      {differences && (
+        <div className="differences-section">
+          <h3>Key Differences</h3>
+          <div className="differences-grid">
+            <div className="difference-item">
+              <span className="difference-label">Budget</span>
+              <span className={`difference-value ${differences.budget > 0 ? 'positive' : 'negative'}`}>
+                {formatCurrency(Math.abs(differences.budget))} {differences.budget > 0 ? 'higher' : 'lower'}
+              </span>
+            </div>
+            <div className="difference-item">
+              <span className="difference-label">Revenue</span>
+              <span className={`difference-value ${differences.revenue > 0 ? 'positive' : 'negative'}`}>
+                {formatCurrency(Math.abs(differences.revenue))} {differences.revenue > 0 ? 'higher' : 'lower'}
+              </span>
+            </div>
+            <div className="difference-item">
+              <span className="difference-label">Rating</span>
+              <span className={`difference-value ${differences.rating > 0 ? 'positive' : 'negative'}`}>
+                {Math.abs(differences.rating).toFixed(1)} points {differences.rating > 0 ? 'higher' : 'lower'}
+              </span>
+            </div>
+            <div className="difference-item">
+              <span className="difference-label">Release Year</span>
+              <span className={`difference-value ${differences.year > 0 ? 'positive' : 'negative'}`}>
+                {Math.abs(differences.year)} years {differences.year > 0 ? 'newer' : 'older'}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Charts Section */}
       {movies[0] && movies[1] && (
@@ -455,26 +423,12 @@ const ComparePage = () => {
           </div>
 
           <div className="chart-container">
-            <div className="chart-wrapper">
-              <h3>{movies[0].title}</h3>
-              <div className="chart">
-                <Bar 
-                  data={createChartData(activeTab, movies[0])} 
-                  options={chartOptions}
-                  height={400}
-                />
-              </div>
-            </div>
-
-            <div className="chart-wrapper">
-              <h3>{movies[1].title}</h3>
-              <div className="chart">
-                <Bar 
-                  data={createChartData(activeTab, movies[1])} 
-                  options={chartOptions}
-                  height={400}
-                />
-              </div>
+            <div className="chart">
+              <Bar 
+                data={createComparisonChartData()} 
+                options={chartOptions}
+                height={400}
+              />
             </div>
           </div>
         </div>
