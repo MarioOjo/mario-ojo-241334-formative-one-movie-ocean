@@ -118,7 +118,7 @@
 .movie-data-container {
   width: 100%;
   max-width: 900px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(248, 246, 246, 0.1);
   backdrop-filter: blur(10px);
   border-radius: 15px;
   padding: 2rem;
@@ -163,7 +163,7 @@
   border-radius: 10px;
   padding: 1.5rem;
   margin-top: 2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(250, 250, 250, 0.1);
 }
 
 /* Error and No Results */
