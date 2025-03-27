@@ -1,8 +1,9 @@
 /* ComparePage.css */
 .compare-page {
   padding: 2rem;
+  max-width: 1400px;
   margin: 0 auto;
-  background: linear-gradient(270deg, #574E3F 18.5%, #8A8A64 84%, #BDBD88 100%);
+  background: linear-gradient(270deg, #1a1a1a 0%, #2d2d2d 100%);
   color: #fff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   min-height: 100vh;
