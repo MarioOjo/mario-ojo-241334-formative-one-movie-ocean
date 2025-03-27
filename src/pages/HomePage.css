@@ -16,7 +16,7 @@
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
   text-align: center;
-  color: #ffffff;
+  color: #000000;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -72,7 +72,7 @@
 
 .button-group button:first-child {
   background-color: #4bc0c0;
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
 .button-group button:first-child:hover {
@@ -82,7 +82,7 @@
 
 .compare-button {
   background-color: #ff6b6b;
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
 .compare-button:hover {
