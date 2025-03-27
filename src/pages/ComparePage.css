@@ -1,11 +1,20 @@
 /* Base Styles */
+/* Main page background */
 .compare-page {
+  background: linear-gradient(270deg, #574E3F 18.5%, #8A8A64 84%, #BDBD88 100%);
+  min-height: 100vh;
   padding: 2rem;
+}
+
+/* Container for all compare page content */
+.compare-content-container {
+  background: rgba(248, 246, 246, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   max-width: 1400px;
   margin: 0 auto;
-  background: linear-gradient(270deg, #1a1a1a 0%, #2d2d2d 100%);
-  color: #fff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .compare-header {
@@ -14,7 +23,7 @@
 }
 
 .compare-header h1 {
-  color: #4bc0c0;
+  color: #000000;
   font-size: 2.2rem;
   margin-bottom: 1rem;
 }
