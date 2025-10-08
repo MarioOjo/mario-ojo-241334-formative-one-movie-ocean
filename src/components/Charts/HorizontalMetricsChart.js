@@ -19,32 +19,21 @@ ChartJS.register(
   Legend
 );
 
-const BarChart = ({ data, options, title = "Financial Metrics" }) => {
+const HorizontalMetricsChart = ({ data, options, title = "Movie Metrics" }) => {
   const enhancedOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    indexAxis: 'y', // This makes it horizontal
     animation: {
       duration: 2000,
       easing: 'easeInOutQuart',
     },
-    interaction: {
-      intersect: false,
-      mode: 'index',
-    },
     plugins: {
-      legend: { 
-        position: 'top',
-        labels: {
-          usePointStyle: true,
-          padding: 20,
-          font: {
-            size: 12,
-            weight: 'bold'
-          }
-        }
+      legend: {
+        display: false // Hide legend for cleaner look
       },
-      title: { 
-        display: true, 
+      title: {
+        display: true,
         text: title,
         font: {
           size: 16,
@@ -61,43 +50,53 @@ const BarChart = ({ data, options, title = "Financial Metrics" }) => {
         cornerRadius: 8,
         callbacks: {
           label: function(context) {
-            const value = context.parsed.y;
-            if (context.dataIndex === 0 || context.dataIndex === 1 || context.dataIndex === 2) {
-              return `${context.dataset.label}: $${value.toFixed(1)}M`;
+            const label = context.label || '';
+            const value = context.parsed.x;
+            
+            switch(label) {
+              case 'Rating (x10)':
+                return `Rating: ${(value/10).toFixed(1)}/10`;
+              case 'Runtime (/10)':
+                return `Runtime: ${(value*10)} minutes`;
+              case 'Vote Count (/1000)':
+                return `Votes: ${(value*1000).toLocaleString()}`;
+              case 'Popularity':
+                return `Popularity: ${value.toFixed(1)}`;
+              default:
+                return `${label}: ${value}`;
             }
-            return `${context.dataset.label}: ${value}`;
           }
         }
       }
     },
     scales: {
-      y: {
+      x: {
         beginAtZero: true,
-        title: { 
-          display: true, 
-          text: 'Millions (USD)',
-          font: {
-            weight: 'bold'
-          }
-        },
         grid: {
           color: 'rgba(0, 0, 0, 0.1)',
         },
         ticks: {
-          callback: function(value) {
-            return '$' + value + 'M';
+          font: {
+            weight: 'bold'
           }
         }
       },
-      x: {
+      y: {
         grid: {
           display: false,
         },
         ticks: {
           font: {
-            weight: 'bold'
+            weight: 'bold',
+            size: 12
           }
         }
+      }
+    },
+    elements: {
+      bar: {
+        borderRadius: 8,
+        borderSkipped: false,
       }
     },
     ...options
@@ -128,4 +127,4 @@ const BarChart = ({ data, options, title = "Financial Metrics" }) => {
   );
 };
 
-export default BarChart;
+export default HorizontalMetricsChart;

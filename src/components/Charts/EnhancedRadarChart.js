@@ -19,7 +19,7 @@ ChartJS.register(
   Legend
 );
 
-const RadarChart = ({ data, options, title = "Performance Metrics" }) => {
+const EnhancedRadarChart = ({ data, options, title = "Performance Metrics" }) => {
   const enhancedOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -28,7 +28,7 @@ const RadarChart = ({ data, options, title = "Performance Metrics" }) => {
       easing: 'easeInOutQuart',
     },
     plugins: {
-      legend: { 
+      legend: {
         position: 'top',
         labels: {
           usePointStyle: true,
@@ -39,8 +39,8 @@ const RadarChart = ({ data, options, title = "Performance Metrics" }) => {
           }
         }
       },
-      title: { 
-        display: true, 
+      title: {
+        display: true,
         text: title,
         font: {
           size: 16,
@@ -49,26 +49,27 @@ const RadarChart = ({ data, options, title = "Performance Metrics" }) => {
         padding: 20
       },
       tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        backgroundColor: 'rgba(0, 0, 0, 0.9)',
         titleColor: '#fff',
         bodyColor: '#fff',
         borderColor: '#4bc0c0',
-        borderWidth: 1,
-        cornerRadius: 8,
+        borderWidth: 2,
+        cornerRadius: 12,
+        padding: 12,
         callbacks: {
           label: function(context) {
             const label = context.label || '';
             const value = context.parsed.r;
             
             switch(label) {
-              case 'Rating':
-                return `${label}: ${value}/10`;
-              case 'Runtime':
-                return `${label}: ${value} minutes`;
-              case 'Vote Count':
-                return `${label}: ${value.toLocaleString()} votes`;
+              case 'Rating (x10)':
+                return `Rating: ${(value/10).toFixed(1)}/10`;
+              case 'Runtime (/10)':
+                return `Runtime: ${(value*10)} minutes`;
+              case 'Vote Count (/1000)':
+                return `Votes: ${(value*1000).toLocaleString()}`;
               case 'Popularity':
-                return `${label}: ${value.toFixed(1)}`;
+                return `Popularity: ${value.toFixed(1)}`;
               default:
                 return `${label}: ${value}`;
             }
@@ -78,38 +79,57 @@ const RadarChart = ({ data, options, title = "Performance Metrics" }) => {
     },
     scales: {
       r: {
-        angleLines: { 
+        angleLines: {
           display: true,
-          color: 'rgba(0, 0, 0, 0.1)'
+          color: 'rgba(75, 192, 192, 0.2)',
+          lineWidth: 2
         },
         grid: {
-          color: 'rgba(0, 0, 0, 0.1)',
+          color: 'rgba(75, 192, 192, 0.3)',
+          lineWidth: 1,
         },
-        pointLabels: { 
+        pointLabels: {
           color: '#333',
           font: {
-            size: 12,
+            size: 13,
             weight: 'bold'
           }
         },
         ticks: {
-          display: false,
+          display: true,
+          color: 'rgba(75, 192, 192, 0.6)',
+          font: {
+            size: 10
+          },
+          backdropColor: 'rgba(255, 255, 255, 0.8)',
+          backdropPadding: 2,
         },
         suggestedMin: 0,
+        suggestedMax: 100,
       }
     },
     elements: {
       point: {
-        radius: 6,
-        hoverRadius: 8,
+        radius: 8,
+        hoverRadius: 12,
         backgroundColor: '#4bc0c0',
         borderColor: '#fff',
-        borderWidth: 2,
+        borderWidth: 3,
+        shadowOffsetX: 2,
+        shadowOffsetY: 2,
+        shadowBlur: 5,
+        shadowColor: 'rgba(0, 0, 0, 0.3)'
       },
       line: {
-        borderWidth: 3,
-        tension: 0.4,
+        borderWidth: 4,
+        tension: 0.2,
+        borderCapStyle: 'round',
+        borderJoinStyle: 'round'
       }
+    },
+    interaction: {
+      intersect: false,
+      mode: 'point'
     },
     ...options
   };
@@ -139,4 +159,4 @@ const RadarChart = ({ data, options, title = "Performance Metrics" }) => {
   );
 };
 
-export default RadarChart;
+export default EnhancedRadarChart;

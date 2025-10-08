@@ -1,43 +1,49 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { Bar } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-} from 'chart.js';
+import { movieAPI, getImageUrl, formatCurrency } from '../services/movieAPI';
+import { metricSets, getMetricData } from '../utils/movieMetrics';
+import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
+import ComparisonChart from '../components/Charts/ComparisonChart';
 import './ComparePage.css';
 
-// Register Chart.js components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
+// Inline SearchBar component for comparison page
+const SearchBar = ({ value, onChange, results, placeholder, index, onSelectMovie }) => (
+  <div className="search-bar-container">
+    <input
+      type="text"
+      value={value}
+      onChange={(e) => onChange(e, index)}
+      placeholder={placeholder}
+      className="search-input"
+    />
+    {results.length > 0 && (
+      <ul className="search-results">
+        {results.map((movie) => (
+          <li key={movie.id} onClick={() => onSelectMovie(movie.id, index)}>
+            <img 
+              src={getImageUrl(movie.poster_path, 'w92') || 'https://via.placeholder.com/92x138?text=No+Poster'} 
+              alt={movie.title}
+              className="result-poster"
+            />
+            <div className="result-info">
+              <span className="result-title">{movie.title}</span>
+              <span className="result-year">
+                ({movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A'})
+              </span>
+            </div>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
 );
-
-// API configuration details
-const API_URL = 'https://api.themoviedb.org/3/search/movie';
-const options = {
-  method: 'GET',
-  headers: {
-    accept: 'application/json',
-    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiZjEyZmYwNTQyMTQ1Zjk2OTMwN2UxMjhlYWU0NjY3MyIsInN1YiI6IjY2ZTk1NjFlODJmZjg3M2Y3ZDFlYTZmMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Gi_-5IleLtUa4XCv8VwUkHKjJaQNwWPAVOw5Ed3LOUg'
-  }
-};
 
 const ComparePage = () => {
   const [movies, setMovies] = useState([null, null]);
   const [loading, setLoading] = useState([false, false]);
   const [searchTerm, setSearchTerm] = useState(['', '']);
   const [searchResults, setSearchResults] = useState([[], []]);
+  const [activeMetricSet, setActiveMetricSet] = useState('financial');
 
   const searchMovies = async (query, index) => {
     if (!query.trim()) {
@@ -56,31 +62,20 @@ const ComparePage = () => {
         return newLoad;
       });
 
-      const response = await axios.get(`${API_URL}?query=${query}&include_adult=false&language=en-US&page=1`, options);
+      const results = await movieAPI.search(query);
       
-      const results = response.data.results.map(movie => ({
-        id: movie.id,
-        title: movie.title,
-        poster_path: movie.poster_path 
-          ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-          : 'https://via.placeholder.com/500x750?text=No+Poster',
-        release_date: movie.release_date,
-        tagline: '', // TMDB doesn't provide tagline in search results
-        overview: movie.overview,
-        budget: movie.budget || 0,
-        revenue: movie.revenue || 0,
-        weekend_gross: 0, // TMDB doesn't provide weekend gross in search
-        vote_average: movie.vote_average,
-        runtime: movie.runtime || 0
-      }));
-
       setSearchResults(prev => {
         const newResults = [...prev];
-        newResults[index] = results;
+        newResults[index] = results.results.slice(0, 5); // Limit to 5 results
         return newResults;
       });
     } catch (error) {
       console.error('Search error:', error);
+      setSearchResults(prev => {
+        const newResults = [...prev];
+        newResults[index] = [];
+        return newResults;
+      });
     } finally {
       setLoading(prev => {
         const newLoad = [...prev];
@@ -97,7 +92,13 @@ const ComparePage = () => {
       newTerms[index] = value;
       return newTerms;
     });
-    searchMovies(value, index);
+    
+    // Debounce search
+    const timeoutId = setTimeout(() => {
+      searchMovies(value, index);
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
   };
 
   const fetchMovieDetails = async (movieId, index) => {
@@ -108,28 +109,19 @@ const ComparePage = () => {
         return newLoad;
       });
 
-      const response = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}`, options);
-      const details = response.data;
-
-      // Additional call for release dates to get weekend gross (approximation)
-      const releaseResponse = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}/release_dates`, options);
-      const usRelease = releaseResponse.data.results.find(r => r.iso_3166_1 === 'US');
-      const releaseDate = usRelease?.release_dates[0]?.release_date || details.release_date;
-
+      const movieData = await movieAPI.fetchById(movieId);
+      
       const movie = {
-        id: details.id,
-        title: details.title,
-        poster_path: details.poster_path 
-          ? `https://image.tmdb.org/t/p/w500${details.poster_path}`
-          : 'https://via.placeholder.com/500x750?text=No+Poster',
-        release_date: details.release_date,
-        tagline: details.tagline,
-        overview: details.overview,
-        budget: details.budget || 0,
-        revenue: details.revenue || 0,
-        weekend_gross: Math.floor(details.revenue * 0.3), // Approximation since TMDB doesn't provide
-        vote_average: details.vote_average,
-        runtime: details.runtime || 0
+        ...movieData,
+        poster_path: getImageUrl(movieData.poster_path),
+        backdrop_path: getImageUrl(movieData.backdrop_path, 'w1280'),
+        // Add comprehensive data
+        credits: movieData.credits || {},
+        videos: movieData.videos || {},
+        reviews: movieData.reviews || {},
+        recommendations: movieData.recommendations || {},
+        similar: movieData.similar || {},
+        images: movieData.images || {}
       };
 
       selectMovie(movie, index);
@@ -145,13 +137,9 @@ const ComparePage = () => {
   };
 
   const selectMovie = (movie, index) => {
-    const formattedMovie = {
-      ...movie,
-      profit: movie.revenue - movie.budget
-    };
     setMovies(prev => {
       const newMovies = [...prev];
-      newMovies[index] = formattedMovie;
+      newMovies[index] = movie;
       return newMovies;
     });
     setSearchTerm(prev => {
@@ -166,149 +154,76 @@ const ComparePage = () => {
     });
   };
 
-  // Format currency in millions
-  const formatCurrency = (amount) => {
-    if (amount === 0 || amount === null) return '$0M';
-    return `$${(amount / 1000000).toFixed(1)}M`;
-  };
-
-  // Create chart data for individual movie
-  const createMovieChartData = (movie) => {
-    if (!movie) return null;
-    
-    return {
-      labels: ['Budget', 'Revenue', 'Profit'],
-      datasets: [{
-        label: 'Financials (USD)',
-        data: [movie.budget, movie.revenue, movie.profit],
-        backgroundColor: [
-          'rgba(54, 162, 235, 0.6)',
-          'rgba(75, 192, 192, 0.6)',
-          'rgba(153, 102, 255, 0.6)'
-        ],
-        borderColor: [
-          'rgba(54, 162, 235, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)'
-        ],
-        borderWidth: 1
-      }]
-    };
-  };
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false
-      },
-      tooltip: {
-        callbacks: {
-          label: function(context) {
-            return `$${(context.raw / 1000000).toFixed(1)}M`;
-          }
-        }
-      },
-      title: {
-        display: true,
-        text: 'Financial Performance (USD Millions)',
-        color: '#fff',
-        font: {
-          size: 14
-        }
-      }
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          color: '#ccc',
-          callback: function(value) {
-            return `$${(value / 1000000).toFixed(0)}M`;
-          }
-        },
-        grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
-        }
-      },
-      x: {
-        ticks: {
-          color: '#ccc'
-        },
-        grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
-        }
-      }
-    }
-  };
-
-  const SearchBar = ({ value, onChange, onSelect, results, placeholder, index }) => (
-    <div className="search-bar-container">
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e, index)}
-        placeholder={placeholder}
-        className="search-input"
-      />
-      {results.length > 0 && (
-        <ul className="search-results">
-          {results.map((movie) => (
-            <li key={movie.id} onClick={() => fetchMovieDetails(movie.id, index)}>
-              {movie.title} ({movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A'})
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-
   return (
     <div className="compare-page">
       <div className="compare-header">
-        <h1>Movie Comparison Tool</h1>
+        <h1>🎬 Advanced Movie Comparison</h1>
         <Link to="/" className="back-link">← Back to Home</Link>
+      </div>
+
+      {/* Metric Controls */}
+      <div className="comparison-controls">
+        <div className="metric-selector">
+          <h4>📊 Metric Category</h4>
+          <div className="metric-buttons">
+            {Object.keys(metricSets).map(key => (
+              <button
+                key={key}
+                className={`metric-button ${activeMetricSet === key ? 'active' : ''}`}
+                onClick={() => setActiveMetricSet(key)}
+              >
+                {{
+                  financial: '💰',
+                  audience: '👥',
+                  production: '🎬',
+                  analytics: '📈'
+                }[key]} {metricSets[key].title}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="search-containers">
         {/* First Movie Column */}
         <div className="movie-column">
           <div className="search-box">
-            <h3>First Movie</h3>
+            <h3>🎥 First Movie</h3>
             <SearchBar
               value={searchTerm[0]}
               onChange={handleSearchChange}
               results={searchResults[0]}
               placeholder="Search first movie..."
               index={0}
+              onSelectMovie={fetchMovieDetails}
             />
-            {loading[0] && <div className="loading-spinner">Loading...</div>}
+            {loading[0] && <LoadingSpinner message="Searching..." size="small" />}
             {movies[0] && !loading[0] && (
               <div className="selected-movie">
                 <img 
-                  src={movies[0].poster_path} 
+                  src={movies[0].poster_path || 'https://via.placeholder.com/300x450?text=No+Poster'} 
                   alt={movies[0].title}
                   className="movie-poster"
                 />
                 <div className="movie-info">
                   <h4>{movies[0].title}</h4>
                   {movies[0].release_date && (
-                    <p>({new Date(movies[0].release_date).getFullYear()})</p>
+                    <p className="release-year">({new Date(movies[0].release_date).getFullYear()})</p>
                   )}
                   {movies[0].tagline && (
-                    <p className="movie-tagline">{movies[0].tagline}</p>
+                    <p className="movie-tagline">"{movies[0].tagline}"</p>
                   )}
-                  {movies[0].overview && (
-                    <p className="movie-overview">{movies[0].overview}</p>
-                  )}
-                  <div className="movie-stats">
-                    <div className="stat-box">
-                      <span>WEEKEND GROSS</span>
-                      <span>{formatCurrency(movies[0].weekend_gross)}</span>
+                  <div className="quick-stats">
+                    <div className="stat-item">
+                      <span>Rating:</span>
+                      <span>{(movies[0].vote_average || 0).toFixed(1)}/10</span>
                     </div>
-                    <div className="stat-box">
-                      <span>TOTAL GROSS</span>
+                    <div className="stat-item">
+                      <span>Budget:</span>
+                      <span>{formatCurrency(movies[0].budget)}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span>Revenue:</span>
                       <span>{formatCurrency(movies[0].revenue)}</span>
                     </div>
                   </div>
@@ -316,63 +231,51 @@ const ComparePage = () => {
               </div>
             )}
           </div>
-
-          {movies[0] && !loading[0] && (
-            <div className="chart-container">
-              <div className="chart-wrapper">
-                <Bar 
-                  data={createMovieChartData(movies[0])} 
-                  options={chartOptions}
-                />
-              </div>
-              <div className="chart-summary">
-                <p><strong>Budget:</strong> {formatCurrency(movies[0].budget)}</p>
-                <p><strong>Revenue:</strong> {formatCurrency(movies[0].revenue)}</p>
-                <p><strong>Profit:</strong> {formatCurrency(movies[0].profit)}</p>
-              </div>
-            </div>
-          )}
         </div>
 
-        <div className="vs-circle">VS</div>
+        <div className="vs-circle">
+          <span>VS</span>
+        </div>
 
         {/* Second Movie Column */}
         <div className="movie-column">
           <div className="search-box">
-            <h3>Second Movie</h3>
+            <h3>🎥 Second Movie</h3>
             <SearchBar
               value={searchTerm[1]}
               onChange={handleSearchChange}
               results={searchResults[1]}
               placeholder="Search second movie..."
               index={1}
+              onSelectMovie={fetchMovieDetails}
             />
-            {loading[1] && <div className="loading-spinner">Loading...</div>}
+            {loading[1] && <LoadingSpinner message="Searching..." size="small" />}
             {movies[1] && !loading[1] && (
               <div className="selected-movie">
                 <img 
-                  src={movies[1].poster_path} 
+                  src={movies[1].poster_path || 'https://via.placeholder.com/300x450?text=No+Poster'} 
                   alt={movies[1].title}
                   className="movie-poster"
                 />
                 <div className="movie-info">
                   <h4>{movies[1].title}</h4>
                   {movies[1].release_date && (
-                    <p>({new Date(movies[1].release_date).getFullYear()})</p>
+                    <p className="release-year">({new Date(movies[1].release_date).getFullYear()})</p>
                   )}
                   {movies[1].tagline && (
-                    <p className="movie-tagline">{movies[1].tagline}</p>
+                    <p className="movie-tagline">"{movies[1].tagline}"</p>
                   )}
-                  {movies[1].overview && (
-                    <p className="movie-overview">{movies[1].overview}</p>
-                  )}
-                  <div className="movie-stats">
-                    <div className="stat-box">
-                      <span>WEEKEND GROSS</span>
-                      <span>{formatCurrency(movies[1].weekend_gross)}</span>
+                  <div className="quick-stats">
+                    <div className="stat-item">
+                      <span>Rating:</span>
+                      <span>{(movies[1].vote_average || 0).toFixed(1)}/10</span>
                     </div>
-                    <div className="stat-box">
-                      <span>TOTAL GROSS</span>
+                    <div className="stat-item">
+                      <span>Budget:</span>
+                      <span>{formatCurrency(movies[1].budget)}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span>Revenue:</span>
                       <span>{formatCurrency(movies[1].revenue)}</span>
                     </div>
                   </div>
@@ -380,48 +283,18 @@ const ComparePage = () => {
               </div>
             )}
           </div>
-
-          {movies[1] && !loading[1] && (
-            <div className="chart-container">
-              <div className="chart-wrapper">
-                <Bar 
-                  data={createMovieChartData(movies[1])} 
-                  options={chartOptions}
-                />
-              </div>
-              <div className="chart-summary">
-                <p><strong>Budget:</strong> {formatCurrency(movies[1].budget)}</p>
-                <p><strong>Revenue:</strong> {formatCurrency(movies[1].revenue)}</p>
-                <p><strong>Profit:</strong> {formatCurrency(movies[1].profit)}</p>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
-      {/* Comparison Summary */}
+      {/* Comparison Chart */}
       {movies[0] && movies[1] && !loading[0] && !loading[1] && (
-        <div className="comparison-summary">
-          <h3>Key Differences</h3>
-          <div className="difference-grid">
-            <div className="difference-item">
-              <span>Budget Difference</span>
-              <span>{formatCurrency(Math.abs(movies[0].budget - movies[1].budget))}</span>
-            </div>
-            <div className="difference-item">
-              <span>Revenue Difference</span>
-              <span>{formatCurrency(Math.abs(movies[0].revenue - movies[1].revenue))}</span>
-            </div>
-            <div className="difference-item">
-              <span>Profit Difference</span>
-              <span>{formatCurrency(Math.abs(movies[0].profit - movies[1].profit))}</span>
-            </div>
-            <div className="difference-item">
-              <span>Weekend Gross Difference</span>
-              <span>{formatCurrency(Math.abs(movies[0].weekend_gross - movies[1].weekend_gross))}</span>
-            </div>
-          </div>
-        </div>
+        <ComparisonChart
+          movie1={movies[0]}
+          movie2={movies[1]}
+          metricData1={getMetricData(movies[0], activeMetricSet)}
+          metricData2={getMetricData(movies[1], activeMetricSet)}
+          categoryTitle={metricSets[activeMetricSet]?.title}
+        />
       )}
     </div>
   );

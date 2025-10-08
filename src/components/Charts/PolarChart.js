@@ -1,25 +1,16 @@
 import React from 'react';
 import {
   Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
+  RadialLinearScale,
+  ArcElement,
   Tooltip,
   Legend
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import { PolarArea } from 'react-chartjs-2';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(RadialLinearScale, ArcElement, Tooltip, Legend);
 
-const BarChart = ({ data, options, title = "Financial Metrics" }) => {
+const PolarChart = ({ data, options, title = "Movie Metrics" }) => {
   const enhancedOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -27,13 +18,9 @@ const BarChart = ({ data, options, title = "Financial Metrics" }) => {
       duration: 2000,
       easing: 'easeInOutQuart',
     },
-    interaction: {
-      intersect: false,
-      mode: 'index',
-    },
     plugins: {
-      legend: { 
-        position: 'top',
+      legend: {
+        position: 'bottom',
         labels: {
           usePointStyle: true,
           padding: 20,
@@ -43,8 +30,8 @@ const BarChart = ({ data, options, title = "Financial Metrics" }) => {
           }
         }
       },
-      title: { 
-        display: true, 
+      title: {
+        display: true,
         text: title,
         font: {
           size: 16,
@@ -61,43 +48,41 @@ const BarChart = ({ data, options, title = "Financial Metrics" }) => {
         cornerRadius: 8,
         callbacks: {
           label: function(context) {
-            const value = context.parsed.y;
-            if (context.dataIndex === 0 || context.dataIndex === 1 || context.dataIndex === 2) {
-              return `${context.dataset.label}: $${value.toFixed(1)}M`;
+            const label = context.label || '';
+            const value = context.parsed.r;
+            
+            switch(label) {
+              case 'Rating':
+                return `${label}: ${value}/10`;
+              case 'Runtime':
+                return `${label}: ${value} minutes`;
+              case 'Vote Count':
+                return `${label}: ${value.toLocaleString()} votes`;
+              case 'Popularity':
+                return `${label}: ${value.toFixed(1)}`;
+              default:
+                return `${label}: ${value}`;
             }
-            return `${context.dataset.label}: ${value}`;
           }
         }
       }
     },
     scales: {
-      y: {
-        beginAtZero: true,
-        title: { 
-          display: true, 
-          text: 'Millions (USD)',
-          font: {
-            weight: 'bold'
-          }
-        },
+      r: {
         grid: {
           color: 'rgba(0, 0, 0, 0.1)',
         },
-        ticks: {
-          callback: function(value) {
-            return '$' + value + 'M';
-          }
-        }
-      },
-      x: {
-        grid: {
-          display: false,
-        },
-        ticks: {
+        pointLabels: {
+          color: '#333',
           font: {
+            size: 12,
             weight: 'bold'
           }
-        }
+        },
+        ticks: {
+          display: false,
+        },
+        suggestedMin: 0,
       }
     },
     ...options
@@ -123,9 +108,9 @@ const BarChart = ({ data, options, title = "Financial Metrics" }) => {
   return (
     <div className="chart-wrapper">
       <div className="chart-title">{title}</div>
-      <Bar data={data} options={enhancedOptions} />
+      <PolarArea data={data} options={enhancedOptions} />
     </div>
   );
 };
 
-export default BarChart;
+export default PolarChart;

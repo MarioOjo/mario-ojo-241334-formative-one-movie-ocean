@@ -1,0 +1,141 @@
+/* Loading Spinner Styles */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Movie-themed spinner */
+.movie-spinner {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.film-reel {
+  width: 60px;
+  height: 60px;
+  border: 4px solid #ddd;
+  border-radius: 50%;
+  position: relative;
+  animation: spin 2s linear infinite;
+  background: linear-gradient(45deg, #333, #666);
+}
+
+.film-reel::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background: #000;
+  border-radius: 50%;
+}
+
+.reel-hole {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #000;
+  border-radius: 50%;
+}
+
+.reel-hole:nth-child(1) {
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.reel-hole:nth-child(2) {
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.reel-hole:nth-child(3) {
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.reel-hole:nth-child(4) {
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Size variations */
+.spinner-small .film-reel {
+  width: 40px;
+  height: 40px;
+}
+
+.spinner-small .film-reel::before {
+  width: 12px;
+  height: 12px;
+}
+
+.spinner-small .reel-hole {
+  width: 5px;
+  height: 5px;
+}
+
+.spinner-medium .film-reel {
+  width: 60px;
+  height: 60px;
+}
+
+.spinner-large .film-reel {
+  width: 80px;
+  height: 80px;
+}
+
+.spinner-large .film-reel::before {
+  width: 25px;
+  height: 25px;
+}
+
+.spinner-large .reel-hole {
+  width: 10px;
+  height: 10px;
+}
+
+.loading-text {
+  color: #666;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+  text-align: center;
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .loading-text {
+    color: #ccc;
+  }
+  
+  .film-reel {
+    border-color: #555;
+  }
+}
