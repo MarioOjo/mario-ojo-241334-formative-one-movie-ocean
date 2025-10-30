@@ -173,9 +173,9 @@ export const metricSets = {
     title: "Production Metrics",
     metrics: [
       { key: 'runtime', label: 'Runtime (min)', formatter: (val) => `${val} min` },
+      { key: 'castSize', label: 'Cast Size', formatter: (val) => val.toString() },
       { key: 'genreCount', label: 'Genres', formatter: (val) => val.toString() },
-      { key: 'languageSupport', label: 'Languages', formatter: (val) => val.toString() },
-      { key: 'productionCompanies', label: 'Production Companies', formatter: (val) => val.toString() }
+      { key: 'languageSupport', label: 'Languages', formatter: (val) => val.toString() }
     ]
   },
 
@@ -207,28 +207,14 @@ export const calculateMetricValue = (movie, metricKey) => {
 
 // Helper function to get metric data for charts
 export const getMetricData = (movie, metricSetKey) => {
-  if (!movie || !metricSets[metricSetKey]) {
-    console.warn(`Invalid movie or metric set: ${metricSetKey}`);
-    return null;
-  }
+  if (!movie || !metricSets[metricSetKey]) return null;
   
   const metricSet = metricSets[metricSetKey];
   const labels = metricSet.metrics.map(m => m.label);
   const data = metricSet.metrics.map(m => {
-    // Find which category contains this metric
-    const category = Object.keys(movieMetrics).find(cat => movieMetrics[cat][m.key]);
-    
-    if (!category) {
-      console.warn(`Category not found for metric: ${m.key}`);
-      return 0;
-    }
-    
-    try {
-      return movieMetrics[category][m.key](movie);
-    } catch (error) {
-      console.error(`Error calculating metric ${m.key}:`, error);
-      return 0;
-    }
+    const category = m.key.includes('.') ? m.key.split('.')[0] : 
+                    Object.keys(movieMetrics).find(cat => movieMetrics[cat][m.key]);
+    return movieMetrics[category][m.key](movie);
   });
   
   return { labels, data, title: metricSet.title };
