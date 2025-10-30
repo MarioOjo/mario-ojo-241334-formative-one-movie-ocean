@@ -2,11 +2,6 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-<<<<<<< Updated upstream
-## Available Scripts
-
-In the project directory, you can run:
-=======
 # Movie Ocean - Movie Data Visualization App
 
 ![App Screenshot](https://via.placeholder.com/800x400?text=Movie+Ocean+Screenshot) <!-- Replace with actual screenshot -->
@@ -16,20 +11,11 @@ A React application for visualizing and comparing movie metrics using data from 
 ## Key Features
 - 📊 Single-movie dashboard with Bar and Radar charts
 - ↔️ Side-by-side movie comparison tool
-- 🔍 Real-time movie search
-- 📱 Fully responsive design
-
-## Tech Stack
 - React.js
 - Chart.js
-- TMDb API
-- Axios
-
-## Installation
 1. Clone the repository:
    ```bash
    git clone https://github.com/MarioOjo/mario-ojo-241334-formative-one-movie-ocean.git
->>>>>>> Stashed changes
 
 ### `npm start`
 
@@ -93,3 +79,4 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+

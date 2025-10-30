@@ -5,20 +5,16 @@
   align-items: center;
   min-height: 100vh;
   padding: 2rem;
-  font-family: 'Inter', 'Segoe UI', sans-serif;
-  background: linear-gradient(270deg, #574E3F 18.5%, #8A8A64 84%, #BDBD88 100%);
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
+  font-family: 'Exo', 'Segoe UI', sans-serif;
+  background: linear-gradient(270deg, #1a1a1a 0%, #2d2d2d 100%);
+  background-size: cover;
+  animation: none;
   color: #ffffff;
   box-sizing: border-box;
   overflow-x: hidden;
 }
 
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
+
 
 /* Header with Text Animation */
 .homepage h1 {
@@ -34,6 +30,7 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: slideInDown 0.8s ease-out, textShimmer 3s ease-in-out infinite;
+  font-family: 'Exo', 'Segoe UI', sans-serif;
 }
 
 @keyframes slideInDown {
@@ -625,4 +622,8 @@ button:disabled {
   .loading-skeleton {
     background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%);
   }
+}
+
+button, .button-group button, .timeline-button-group button {
+  font-family: 'Exo', 'Segoe UI', sans-serif !important;
 }

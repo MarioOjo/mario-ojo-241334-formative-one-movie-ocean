@@ -1,0 +1,144 @@
+.timeline-page {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background: rgba(255,255,255,0.05);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Exo', 'Segoe UI', sans-serif;
+}
+
+.timeline-page h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #4bc0c0;
+  font-family: 'Exo', 'Segoe UI', sans-serif;
+}
+
+.timeline-page .chart-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 1.5rem auto;
+  background: rgba(255,255,255,0.95);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.button-group.timeline-button-group {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 1.5rem;
+}
+
+.button-group.timeline-button-group button {
+  padding: 10px 24px;
+  border-radius: 30px;
+  border: none;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #4bc0c0;
+  color: #000;
+  transition: all 0.3s ease, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(75,192,192,0.08);
+  position: relative;
+  outline: none;
+  font-family: 'Exo', 'Segoe UI', sans-serif !important;
+}
+
+.button-group.timeline-button-group button.active,
+.button-group.timeline-button-group button:hover {
+  background-color: #3aa9a9;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(75,192,192,0.18);
+}
+
+.button-group.timeline-button-group button:focus {
+  outline: 2px solid #4bc0c0;
+  outline-offset: 2px;
+}
+
+.timeline-group-select {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1.2rem;
+  margin-top: 1.5rem;
+  font-family: 'Exo', 'Segoe UI', sans-serif;
+  background: rgba(75,192,192,0.08);
+  border-radius: 24px;
+  padding: 8px 18px;
+  box-shadow: 0 2px 8px rgba(75,192,192,0.08);
+}
+
+.timeline-group-select label {
+  font-weight: 600;
+  color: #4bc0c0;
+  font-size: 1rem;
+}
+
+.timeline-group-select select {
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: 1.5px solid #4bc0c0;
+  font-size: 1rem;
+  font-family: 'Exo', 'Segoe UI', sans-serif;
+  background: #fff;
+  color: #333;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px rgba(75,192,192,0.08);
+}
+
+.timeline-group-select select:focus {
+  border-color: #3aa9a9;
+  outline: none;
+  box-shadow: 0 2px 8px rgba(75,192,192,0.18);
+}
+
+@media (max-width: 700px) {
+  .timeline-page {
+    max-width: 100%;
+    padding: 1rem;
+  }
+  .timeline-page .chart-container {
+    max-width: 100%;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .timeline-page {
+    padding: 0.5rem;
+    border-radius: 8px;
+  }
+  .timeline-page h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .timeline-page .chart-container {
+    padding: 0.25rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .button-group.timeline-button-group button {
+    font-size: 0.9rem;
+    padding: 7px 14px;
+  }
+  .timeline-group-select {
+    padding: 4px 8px;
+    border-radius: 14px;
+  }
+  .timeline-group-select select {
+    font-size: 0.9rem;
+    padding: 5px 10px;
+  }
+}

@@ -4,6 +4,7 @@ import BarChart from '../components/Charts/BarChart';
 import AdvancedChartSelector from '../components/Charts/AdvancedChartSelector';
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 import { movieAPI, getImageUrl, formatCurrency, formatDate } from '../services/movieAPI';
+import { useMovie } from '../context/MovieContext';
 import './HomePage.css';
 
 // Chart.js setup
@@ -18,8 +19,10 @@ import {
   Filler,
   Tooltip,
   Legend,
-  Title
+  Title,
+  TimeScale
 } from 'chart.js';
+import 'chartjs-adapter-date-fns';
 
 ChartJS.register(
   CategoryScale,
@@ -31,7 +34,8 @@ ChartJS.register(
   Filler,
   Tooltip,
   Legend,
-  Title
+  Title,
+  TimeScale
 );
 
 // TMDB API configuration
@@ -40,6 +44,7 @@ const DEFAULT_MOVIE_ID = 603; // The Matrix movie ID
 // Remove the old API functions since we're using the service now
 
 const HomePage = () => {
+  const { selectedMovie, setSelectedMovie, popularityHistory, setPopularityHistory, boxOfficeHistory, setBoxOfficeHistory } = useMovie();
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -82,10 +87,39 @@ const HomePage = () => {
           recommendations: movieData.recommendations || {},
           similar: movieData.similar || {}
         });
+        setSelectedMovie({
+          ...movieData,
+          budget: movieData.budget,
+          revenue: movieData.revenue,
+          vote_average: movieData.vote_average,
+          vote_count: movieData.vote_count,
+          runtime: movieData.runtime,
+          popularity: movieData.popularity,
+          poster_path: getImageUrl(movieData.poster_path),
+          backdrop_path: getImageUrl(movieData.backdrop_path, 'w1280'),
+          release_date: movieData.release_date,
+          credits: movieData.credits || {},
+          videos: movieData.videos || {},
+          reviews: movieData.reviews || {},
+          recommendations: movieData.recommendations || {},
+          similar: movieData.similar || {}
+        });
+        // Add to popularity history
+        setPopularityHistory(prev => [
+          ...prev,
+          { date: new Date().toISOString().slice(0,10), popularity: movieData.popularity }
+        ]);
+        // Add to box office history if available
+        if (movieData.weekly_performance) {
+          setBoxOfficeHistory(movieData.weekly_performance.map((gross, i) => ({ week: i + 1, gross })));
+        } else {
+          setBoxOfficeHistory([]);
+        }
         setQuery(''); // Clear search after selecting
         setSearchResults([]);
       } else {
         setMovie(null);
+        setSelectedMovie(null);
         setError(`No movies found for "${movieIdOrQuery}"`);
       }
     } catch (error) {

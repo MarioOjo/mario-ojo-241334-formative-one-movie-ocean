@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiHome, FiBarChart2 } from 'react-icons/fi'; // Removed FiTrendingUp and FiFilm
+import { FiHome, FiBarChart2, FiClock } from 'react-icons/fi'; // Added FiClock
 import './Navbar.css';
 
 const Navbar = () => {
@@ -31,6 +31,13 @@ const Navbar = () => {
           <Link to="/compare" className="nav-link">
             <FiBarChart2 className="nav-icon" />
             {!isCollapsed && <span>Compare</span>}
+          </Link>
+        </li>
+
+        <li>
+          <Link to="/timeline" className="nav-link">
+            <FiClock className="nav-icon" />
+            {!isCollapsed && <span>Timelines</span>}
           </Link>
         </li>
       </ul>

@@ -30,7 +30,7 @@ class ErrorBoundary extends React.Component {
             <details style={{ whiteSpace: 'pre-wrap', marginTop: '20px' }}>
               {this.state.error && this.state.error.toString()}
               <br />
-              {this.state.errorInfo.componentStack}
+              {this.state.errorInfo && this.state.errorInfo.componentStack}
             </details>
             <button 
               onClick={() => window.location.reload()}
