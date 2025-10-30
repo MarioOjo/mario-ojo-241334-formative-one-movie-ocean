@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&display=swap');
+
+/* filepath: c:\Users\User\OneDrive\Desktop\mario-ojo-241334-formative-one-movie-ocean\src\components\Dashboard.css */
+.main-description-box {
+  padding: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: auto; /* Adjust height to fit content */
+  background-color: rgba(70, 68, 68, 0.8); /* Dark background with transparency */
+  color: black; /* Set text color to black */
+  border-radius: 12px; /* Add rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add subtle shadow */
+  font-family: 'Figtree', sans-serif; /* Set font type to Figtree */
+}
+
+.chart-box {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+  background-color: rgba(70, 68, 68, 0.8); /* Dark background with transparency */
+  color: black; /* Set text color to black */
+  border-radius: 12px; /* Add rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add subtle shadow */
+  font-family: 'Figtree', sans-serif; /* Set font type to Figtree */
+}
+
+.doughnut-chart-box {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+  background-color: rgba(70, 68, 68, 0.8); /* Dark background with transparency */
+  color: black; /* Set text color to black */
+  border-radius: 12px; /* Add rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add subtle shadow */
+  font-family: 'Figtree', sans-serif; /* Set font type to Figtree */
+}
+
+/* Additional styles for text elements */
+.main-description-box h4,
+.main-description-box p,
+.main-description-box .MuiTypography-body2 {
+  color: black; /* Set text color to black */
+}
+
+.chart-box h6,
+.chart-box .MuiTypography-body2 {
+  color: black; /* Set text color to black */
+}
+
+.doughnut-chart-box h6,
+.doughnut-chart-box .MuiTypography-body2 {
+  color: black; /* Set text color to black */
+}
