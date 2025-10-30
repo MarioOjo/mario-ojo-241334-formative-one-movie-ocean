@@ -1,0 +1,29 @@
+{
+  "files": {
+    "main.css": "/mario-ojo-241334-formative-one-movie-verse/static/css/main.a39c7494.css",
+    "main.js": "/mario-ojo-241334-formative-one-movie-verse/static/js/main.dce3c9e6.js",
+    "static/css/147.dd6646d7.chunk.css": "/mario-ojo-241334-formative-one-movie-verse/static/css/147.dd6646d7.chunk.css",
+    "static/js/147.357546eb.chunk.js": "/mario-ojo-241334-formative-one-movie-verse/static/js/147.357546eb.chunk.js",
+    "static/css/788.ea29808e.chunk.css": "/mario-ojo-241334-formative-one-movie-verse/static/css/788.ea29808e.chunk.css",
+    "static/js/788.48d1d0f8.chunk.js": "/mario-ojo-241334-formative-one-movie-verse/static/js/788.48d1d0f8.chunk.js",
+    "static/js/900.71c22a00.chunk.js": "/mario-ojo-241334-formative-one-movie-verse/static/js/900.71c22a00.chunk.js",
+    "static/js/58.2ee46707.chunk.js": "/mario-ojo-241334-formative-one-movie-verse/static/js/58.2ee46707.chunk.js",
+    "static/js/213.3c3fcb2e.chunk.js": "/mario-ojo-241334-formative-one-movie-verse/static/js/213.3c3fcb2e.chunk.js",
+    "static/js/987.28ef9d6f.chunk.js": "/mario-ojo-241334-formative-one-movie-verse/static/js/987.28ef9d6f.chunk.js",
+    "index.html": "/mario-ojo-241334-formative-one-movie-verse/index.html",
+    "main.a39c7494.css.map": "/mario-ojo-241334-formative-one-movie-verse/static/css/main.a39c7494.css.map",
+    "main.dce3c9e6.js.map": "/mario-ojo-241334-formative-one-movie-verse/static/js/main.dce3c9e6.js.map",
+    "147.dd6646d7.chunk.css.map": "/mario-ojo-241334-formative-one-movie-verse/static/css/147.dd6646d7.chunk.css.map",
+    "147.357546eb.chunk.js.map": "/mario-ojo-241334-formative-one-movie-verse/static/js/147.357546eb.chunk.js.map",
+    "788.ea29808e.chunk.css.map": "/mario-ojo-241334-formative-one-movie-verse/static/css/788.ea29808e.chunk.css.map",
+    "788.48d1d0f8.chunk.js.map": "/mario-ojo-241334-formative-one-movie-verse/static/js/788.48d1d0f8.chunk.js.map",
+    "900.71c22a00.chunk.js.map": "/mario-ojo-241334-formative-one-movie-verse/static/js/900.71c22a00.chunk.js.map",
+    "58.2ee46707.chunk.js.map": "/mario-ojo-241334-formative-one-movie-verse/static/js/58.2ee46707.chunk.js.map",
+    "213.3c3fcb2e.chunk.js.map": "/mario-ojo-241334-formative-one-movie-verse/static/js/213.3c3fcb2e.chunk.js.map",
+    "987.28ef9d6f.chunk.js.map": "/mario-ojo-241334-formative-one-movie-verse/static/js/987.28ef9d6f.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a39c7494.css",
+    "static/js/main.dce3c9e6.js"
+  ]
+}
