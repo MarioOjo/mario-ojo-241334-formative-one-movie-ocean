@@ -1,117 +1,157 @@
-# MOVIE OCEAN REACT APP 
+# Movieverse
 
-A brief description of what this project does and who it's for
+Movieverse is a React web app for exploring, visualizing, and comparing movie data using TMDb and a custom box-office API. It provides searchable movie dashboards, multi-chart visualizations, side-by-side comparisons, and timeline analysis.
 
-An app that uses a tmbd API to enable the user to search and view finacial metrics of any movie withing a bar and aradar chart representation . As well as compare tthosese metric to each other.
+## Main features
 
+- Search and preview movie details
+- Interactive charts (bar, radar, timelines)
+- Compare two movies side-by-side with metric highlights
+- Responsive UI with accessible color contrasts
 
-## API Reference
+## Tech stack
 
-#### Get all items
+- React 19
+- React Router DOM
+- Chart.js + react-chartjs-2
+- Axios for API requests
+- Material UI (MUI)
+- gh-pages (optional) for GitHub Pages deployment
 
-```http
-  GET https://api.themoviedb.org/3/search/movie
+## Quick start
 
+1. Install dependencies
+
+```powershell
+npm install
 ```
 
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `api_key` | `string` | **Required**. Your API key |
-| `query` | `string` | Required. Movie title to search |
-| `page` | `number` | Optional. Page number for results|
+2. Add your TMDb API key to a `.env` file at the project root:
 
-#### GET https://api.themoviedb.org/3/search/movie?api_key=bf12ff0542145f969307e128eae46673Y&query=Inception
-
-
-```http
-  GET /api/items/${id}
+```
+REACT_APP_TMDB_KEY=your_tmdb_key_here
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `api_key`      | `string` | Required. Your TMDB API key |
-| `id` | `number` | Required. Movie ID to fetch details |
+3. Start the dev server
 
+```powershell
+npm start
+```
 
-#### GET https://api.themoviedb.org/3/movie/27205?api_key=YOUR_API_KEY
+4. Build for production
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+```powershell
+npm run build
+```
 
-# Movie Ocean - Movie Data Visualization App
+Optional: Deploy with `gh-pages` (if configured)
 
-![App Screenshot](https://via.placeholder.com/800x400?text=Movie+Ocean+Screenshot) <!-- Replace with actual screenshot -->
+```powershell
+npm run deploy
+```
 
-A React application for visualizing and comparing movie metrics using data from The Movie Database (TMDb) API. Features interactive charts for financial and performance analysis.
+## Important source snippets (exact from `main` branch)
 
-## Key Features
-- 📊 Single-movie dashboard with Bar and Radar charts
-- ↔️ Side-by-side movie comparison tool
-- React.js
-- Chart.js
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/MarioOjo/mario-ojo-241334-formative-one-movie-ocean.git
+App routing (`src/App.js`):
 
-### `npm start`
+```js
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar/Navbar';
+import HomePage from './pages/HomePage';
+import ComparePage from './pages/ComparePage';
+import './App.css';
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+function App() {
+  return (
+    <Router>
+      <div className="app-container">
+        <Navbar />
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/compare" element={<ComparePage />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
+  );
+}
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+export default App;
+```
 
-### `npm test`
+Home page: core fetch helpers and usage (`src/pages/HomePage.js`)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```js
+// TMDB API configuration
+const API_KEY = 'bf12ff0542145f969307e128eae46673';
+const BASE_URL = 'https://api.themoviedb.org/3';
 
-### `npm run build`
+const fetchMovieById = async (movieId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/movie/${movieId}`, {
+      params: { api_key: API_KEY, append_to_response: 'release_dates' }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching movie:', error);
+    throw error;
+  }
+};
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+const searchMovies = async (query) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/search/movie`, {
+      params: { api_key: API_KEY, query: query, language: 'en-US', page: 1 }
+    });
+    return response.data.results;
+  } catch (error) {
+    console.error('Error searching movies:', error);
+    throw error;
+  }
+};
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Centralized API helper (`src/movieAPI.js`):
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```js
+import axios from 'axios';
 
-### `npm run eject`
+const tmdbAPI = axios.create({
+  baseURL: 'https://api.themoviedb.org/3',
+  params: { api_key: process.env.REACT_APP_TMDB_KEY, language: 'en-US' }
+});
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+const makeRequest = async (apiInstance, config) => {
+  const source = axios.CancelToken.source();
+  // ... track cancellation token
+  try {
+    const response = await apiInstance({ ...config, cancelToken: source.token });
+    return response.data;
+  } catch (error) {
+    if (!axios.isCancel(error)) {
+      console.error('API Error:', error);
+      throw error;
+    }
+  }
+};
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Package scripts (excerpt from `package.json`):
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```json
+"scripts": {
+  "start": "react-scripts start",
+  "build": "react-scripts build",
+  "test": "react-scripts test",
+  "eject": "react-scripts eject"
+}
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Notes & next steps
 
-## Learn More
+- I restored this README with canonical code snippets from the `main` branch.
+- If you'd like, I can: (A) commit these files locally and push to the remote, (B) recreate missing source files from `main` into the current `gh-pages` branch, or (C) open the `main` branch and switch the working tree back to it so you can continue development there.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
+Tell me which next step you prefer (commit only, commit+push, or restore source files into the current branch). I'll proceed accordingly.
