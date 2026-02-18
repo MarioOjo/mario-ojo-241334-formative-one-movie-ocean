@@ -1,41 +1,157 @@
+# Movieverse
 
-# MOVIE OCEAN REACT APP 
+Movieverse is a React web app for exploring, visualizing, and comparing movie data using TMDb and a custom box-office API. It provides searchable movie dashboards, multi-chart visualizations, side-by-side comparisons, and timeline analysis.
 
-A brief description of what this project does and who it's for
+## Main features
 
-An app that uses a tmbd API to enable the user to search and view finacial metrics of any movie withing a bar and aradar chart representation . As well as compare tthosese metric to each other.
+- Search and preview movie details
+- Interactive charts (bar, radar, timelines)
+- Compare two movies side-by-side with metric highlights
+- Responsive UI with accessible color contrasts
 
+## Tech stack
 
-## API Reference
+- React 19
+- React Router DOM
+- Chart.js + react-chartjs-2
+- Axios for API requests
+- Material UI (MUI)
+- gh-pages (optional) for GitHub Pages deployment
 
-#### Get all items
+## Quick start
 
-```http
-  GET https://api.themoviedb.org/3/search/movie
+1. Install dependencies
 
+```powershell
+npm install
 ```
 
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `api_key` | `string` | **Required**. Your API key |
-| `query` | `string` | Required. Movie title to search |
-| `page` | `number` | Optional. Page number for results|
+2. Add your TMDb API key to a `.env` file at the project root:
 
-#### GET https://api.themoviedb.org/3/search/movie?api_key=bf12ff0542145f969307e128eae46673Y&query=Inception
-
-
-```http
-  GET /api/items/${id}
+```
+REACT_APP_TMDB_KEY=your_tmdb_key_here
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `api_key`      | `string` | Required. Your TMDB API key |
-| `id` | `number` | Required. Movie ID to fetch details |
+3. Start the dev server
 
+```powershell
+npm start
+```
 
-#### GET https://api.themoviedb.org/3/movie/27205?api_key=YOUR_API_KEY
+4. Build for production
 
+```powershell
+npm run build
+```
 
+Optional: Deploy with `gh-pages` (if configured)
 
+```powershell
+npm run deploy
+```
 
+## Important source snippets (exact from `main` branch)
+
+App routing (`src/App.js`):
+
+```js
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar/Navbar';
+import HomePage from './pages/HomePage';
+import ComparePage from './pages/ComparePage';
+import './App.css';
+
+function App() {
+  return (
+    <Router>
+      <div className="app-container">
+        <Navbar />
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/compare" element={<ComparePage />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
+  );
+}
+
+export default App;
+```
+
+Home page: core fetch helpers and usage (`src/pages/HomePage.js`)
+
+```js
+// TMDB API configuration
+const API_KEY = 'bf12ff0542145f969307e128eae46673';
+const BASE_URL = 'https://api.themoviedb.org/3';
+
+const fetchMovieById = async (movieId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/movie/${movieId}`, {
+      params: { api_key: API_KEY, append_to_response: 'release_dates' }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching movie:', error);
+    throw error;
+  }
+};
+
+const searchMovies = async (query) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/search/movie`, {
+      params: { api_key: API_KEY, query: query, language: 'en-US', page: 1 }
+    });
+    return response.data.results;
+  } catch (error) {
+    console.error('Error searching movies:', error);
+    throw error;
+  }
+};
+```
+
+Centralized API helper (`src/movieAPI.js`):
+
+```js
+import axios from 'axios';
+
+const tmdbAPI = axios.create({
+  baseURL: 'https://api.themoviedb.org/3',
+  params: { api_key: process.env.REACT_APP_TMDB_KEY, language: 'en-US' }
+});
+
+const makeRequest = async (apiInstance, config) => {
+  const source = axios.CancelToken.source();
+  // ... track cancellation token
+  try {
+    const response = await apiInstance({ ...config, cancelToken: source.token });
+    return response.data;
+  } catch (error) {
+    if (!axios.isCancel(error)) {
+      console.error('API Error:', error);
+      throw error;
+    }
+  }
+};
+```
+
+Package scripts (excerpt from `package.json`):
+
+```json
+"scripts": {
+  "start": "react-scripts start",
+  "build": "react-scripts build",
+  "test": "react-scripts test",
+  "eject": "react-scripts eject"
+}
+```
+
+## Notes & next steps
+
+- I restored this README with canonical code snippets from the `main` branch.
+- If you'd like, I can: (A) commit these files locally and push to the remote, (B) recreate missing source files from `main` into the current `gh-pages` branch, or (C) open the `main` branch and switch the working tree back to it so you can continue development there.
+
+Tell me which next step you prefer (commit only, commit+push, or restore source files into the current branch). I'll proceed accordingly.

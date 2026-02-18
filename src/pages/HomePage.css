@@ -1,26 +1,55 @@
-/* Base Styles */
+/* Base Styles with Enhanced Animations */
 .homepage {
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
   padding: 2rem;
-  font-family: 'Arial', sans-serif;
-  background: linear-gradient(270deg, #574E3F 18.5%, #8A8A64 84%, #BDBD88 100%);
+  font-family: 'Exo', 'Segoe UI', sans-serif;
+  background: linear-gradient(270deg, #1a1a1a 0%, #2d2d2d 100%);
+  background-size: cover;
+  animation: none;
   color: #ffffff;
   box-sizing: border-box;
+  overflow-x: hidden;
 }
 
-/* Header */
+
+
+/* Header with Text Animation */
 .homepage h1 {
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
   text-align: center;
   color: #000000;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  animation: slideInDown 0.8s ease-out;
+  background: linear-gradient(45deg, #000, #333, #000);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: slideInDown 0.8s ease-out, textShimmer 3s ease-in-out infinite;
+  font-family: 'Exo', 'Segoe UI', sans-serif;
 }
 
-/* Search Container */
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes textShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Enhanced Search Container with Animations */
 .search-container {
   display: flex;
   flex-direction: column;
@@ -28,6 +57,26 @@
   width: 100%;
   max-width: 600px;
   margin-bottom: 2rem;
+  animation: slideInUp 0.8s ease-out 0.2s both;
+  position: relative;
+  z-index: 100;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-wrapper {
+  position: relative;
+  width: 100%;
+  z-index: 101;
 }
 
 .search-container input {
@@ -38,13 +87,92 @@
   background: rgba(255, 255, 255, 0.9);
   font-size: 1rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
 }
 
 .search-container input:focus {
   outline: none;
-  box-shadow: 0 2px 15px rgba(75, 192, 192, 0.4);
+  box-shadow: 0 4px 20px rgba(75, 192, 192, 0.4);
   background: white;
+  transform: translateY(-2px);
+}
+
+/* Search Results Dropdown */
+.search-results-dropdown {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 102;
+  animation: dropdownSlideIn 0.3s ease-out;
+}
+
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background: rgba(75, 192, 192, 0.1);
+  transform: translateX(5px);
+}
+
+.result-poster {
+  width: 60px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.result-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.result-title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+}
+
+.result-year {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.result-rating {
+  font-size: 0.85rem;
+  color: #ff9500;
+  font-weight: 500;
 }
 
 /* Button Group */
@@ -114,33 +242,56 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Movie Data Container */
+/* Enhanced Movie Data Container with Better Responsive Design */
 .movie-data-container {
   width: 100%;
-  max-width: 900px;
+  max-width: 1200px;
   background: rgba(248, 246, 246, 0.1);
   backdrop-filter: blur(10px);
   border-radius: 15px;
   padding: 2rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   margin-top: 1rem;
+  animation: fadeInScale 0.6s ease-out 0.4s both;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .movie-header {
   text-align: center;
   margin-bottom: 2rem;
+  position: relative;
 }
 
 .movie-header h2 {
   font-size: 2rem;
   margin-bottom: 0.5rem;
-  color: #000000;
+  color: #ffffff;
+  animation: titleGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+  from { text-shadow: 0 2px 4px rgba(255, 255, 255, 0.3); }
+  to { text-shadow: 0 4px 8px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.2); }
 }
 
 .release-year {
-  color: #000000;
+  color: #a1a1a1;
   font-size: 1.2rem;
   margin-bottom: 1.5rem;
+  opacity: 0.8;
 }
 
 .movie-poster {
@@ -150,20 +301,177 @@
   max-width: 300px;
   width: 100%;
   height: auto;
-  transition: transform 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
 }
 
 .movie-poster:hover {
-  transform: scale(1.03);
+  transform: scale(1.05) rotateY(5deg);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
 }
 
-/* Chart Container */
-.chart-container {
-  background: rgba(255, 255, 255, 0.9);
+/* Movie Overview */
+.movie-overview {
+  color: #ddd;
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 1rem auto;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Movie Details Grid */
+.movie-details {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.movie-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.movie-stats {
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
   padding: 1.5rem;
+  backdrop-filter: blur(5px);
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-item:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  font-weight: 600;
+  color: #ccc;
+}
+
+.stat-value {
+  color: #fff;
+  font-weight: 500;
+}
+
+/* Cast and Crew Sections */
+.cast-crew-section {
+  margin: 2rem 0;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #fff;
+  border-bottom: 2px solid rgba(75, 192, 192, 0.5);
+  padding-bottom: 0.5rem;
+}
+
+.cast-grid, .crew-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.cast-member, .crew-member {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.cast-member:hover, .crew-member:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-5px);
+}
+
+.member-name {
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.member-role {
+  color: #ccc;
+  font-size: 0.8rem;
+}
+
+/* Trailers Section */
+.trailers-section {
+  margin: 2rem 0;
+}
+
+.trailers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.trailer-item {
+  position: relative;
+  aspect-ratio: 16/9;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.trailer-item:hover {
+  transform: scale(1.02);
+}
+
+.trailer-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Enhanced Chart Container */
+.chart-container {
   margin-top: 2rem;
-  box-shadow: 0 4px 15px rgba(250, 250, 250, 0.1);
+  animation: slideInUp 0.6s ease-out 0.6s both;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 400px;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.chart-wrapper:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.chart-title {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #4bc0c0;
 }
 
 /* Error and No Results */
@@ -180,7 +488,7 @@
 
 .no-results {
   text-align: center;
-  color: #000000;
+  color: #a1a1a1;
   padding: 2rem;
   font-size: 1.2rem;
   background: rgba(255, 255, 255, 0.05);
@@ -197,7 +505,22 @@ button:disabled {
   transform: none !important;
 }
 
-/* Responsive Design */
+/* Enhanced Responsive Design */
+@media (max-width: 1024px) {
+  .movie-details {
+    grid-template-columns: 1fr;
+  }
+  
+  .chart-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .cast-grid, .crew-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   .homepage {
     padding: 1.5rem;
@@ -218,6 +541,19 @@ button:disabled {
   .movie-poster {
     max-width: 200px;
   }
+  
+  .cast-grid, .crew-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+  
+  .trailers-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .chart-wrapper {
+    height: 300px;
+    padding: 0.5rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -236,4 +572,58 @@ button:disabled {
   .chart-container {
     padding: 1rem;
   }
+  
+  .movie-details {
+    gap: 1rem;
+  }
+  
+  .cast-grid, .crew-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .chart-wrapper {
+    height: 250px;
+  }
+}
+
+/* Loading animations */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .chart-container {
+    background: rgba(30, 30, 30, 0.95);
+  }
+  
+  .chart-wrapper {
+    background: #2a2a2a;
+    color: #fff;
+  }
+  
+  .chart-title {
+    color: #fff;
+  }
+  
+  .loading-skeleton {
+    background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%);
+  }
+}
+
+button, .button-group button, .timeline-button-group button {
+  font-family: 'Exo', 'Segoe UI', sans-serif !important;
 }

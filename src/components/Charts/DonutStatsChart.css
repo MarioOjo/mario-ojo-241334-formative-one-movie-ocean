@@ -1,0 +1,264 @@
+/* DonutStatsChart.css */
+.donut-chart-container {
+  background: #2d2d2d;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  color: #fff;
+  margin: 1rem 0;
+}
+
+.chart-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.chart-title {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #4bc0c0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.donut-chart-wrapper {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  min-height: 400px;
+}
+
+.chart-canvas-container {
+  flex: 1;
+  position: relative;
+  min-height: 400px;
+}
+
+.donut-center-stats {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.center-stat {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #4bc0c0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #ccc;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.stats-panel {
+  flex: 0 0 280px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(75, 192, 192, 0.2);
+}
+
+.stats-panel h4 {
+  margin: 0 0 1.5rem 0;
+  color: #4bc0c0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(75, 192, 192, 0.3);
+}
+
+.insight-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.insight-item:hover {
+  background: rgba(75, 192, 192, 0.1);
+  border-radius: 6px;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.insight-item:last-of-type {
+  border-bottom: none;
+  margin-bottom: 1rem;
+}
+
+.insight-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.insight-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.insight-label {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin-bottom: 0.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.insight-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.performance-indicator {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(75, 192, 192, 0.3);
+}
+
+.performance-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.performance-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4bc0c0, #36a2a2);
+  border-radius: 4px;
+  transition: width 2s ease-in-out;
+  box-shadow: 0 0 8px rgba(75, 192, 192, 0.5);
+}
+
+.performance-text {
+  font-size: 0.9rem;
+  color: #ccc;
+  text-align: center;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.chart-no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: #666;
+  text-align: center;
+}
+
+.chart-no-data h3 {
+  margin-bottom: 1rem;
+  color: #4bc0c0;
+}
+
+.chart-no-data p {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .donut-chart-wrapper {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .stats-panel {
+    flex: none;
+    width: 100%;
+  }
+  
+  .chart-canvas-container {
+    min-height: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .donut-chart-container {
+    padding: 1rem;
+  }
+  
+  .donut-chart-wrapper {
+    gap: 1rem;
+  }
+  
+  .chart-canvas-container {
+    min-height: 300px;
+  }
+  
+  .stats-panel {
+    padding: 1rem;
+  }
+  
+  .insight-item {
+    padding: 0.5rem 0;
+  }
+  
+  .stat-value {
+    font-size: 1.5rem;
+  }
+  
+  .chart-title {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .donut-chart-container {
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+  }
+  
+  .chart-canvas-container {
+    min-height: 250px;
+  }
+  
+  .stats-panel {
+    padding: 0.75rem;
+  }
+  
+  .insight-item {
+    gap: 0.75rem;
+  }
+  
+  .insight-icon {
+    font-size: 1.2rem;
+  }
+  
+  .stat-value {
+    font-size: 1.2rem;
+  }
+  
+  .stat-label {
+    font-size: 0.7rem;
+  }
+}
