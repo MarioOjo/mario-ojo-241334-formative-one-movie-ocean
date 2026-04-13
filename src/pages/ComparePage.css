@@ -478,7 +478,31 @@
 
 @media (max-width: 480px) {
   .compare-page {
-    padding: 1.5rem;
+    padding: 1rem;
+  }
+
+  .compare-content-container {
+    padding: 1rem;
+  }
+
+  .compare-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .search-containers {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .poster-column {
+    flex: 0 0 auto;
+    max-width: 200px;
+    padding: 1rem;
+    margin: 0 auto;
+  }
+
+  .movie-poster {
+    width: 100%;
   }
 
   .stat-box {
@@ -498,6 +522,7 @@
   .tab-button {
     width: 100%;
     text-align: center;
+    padding: 0.6rem 0.8rem;
   }
 
   .comparison-actions {
@@ -508,5 +533,48 @@
   .action-button {
     width: 100%;
     justify-content: center;
+  }
+}
+
+@media (max-width: 320px) {
+  .compare-page {
+    padding: 0.75rem;
+    background: linear-gradient(270deg, #574E3F 18.5%, #8A8A64 84%, #BDBD88 100%);
+  }
+
+  .compare-content-container {
+    padding: 0.75rem;
+    border-radius: 10px;
+  }
+
+  .compare-header h1 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .search-box {
+    padding: 1rem;
+  }
+
+  .search-input {
+    font-size: 0.95rem;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .movie-title {
+    font-size: 1.3rem;
+  }
+
+  .stat-box {
+    padding: 0.75rem;
+    min-width: auto;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+  }
+
+  .stat-value {
+    font-size: 0.9rem;
   }
 }

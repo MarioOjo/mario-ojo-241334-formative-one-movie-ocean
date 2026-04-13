@@ -151,6 +151,7 @@ function ComparisonCharts({ movie1Query, movie2Query }) {
               data={comparisonData.ratings}
               options={{
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                   y: { beginAtZero: true, max: 100 },
                 },
@@ -165,6 +166,7 @@ function ComparisonCharts({ movie1Query, movie2Query }) {
               data={comparisonData.metrics}
               options={{
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                   r: { beginAtZero: true },
                 },

@@ -18,7 +18,8 @@
   padding: 16px;
   display: flex;
   flex-direction: column;
-  height: 400px;
+  min-height: 300px;
+  height: auto;
   background-color: rgba(70, 68, 68, 0.8); /* Dark background with transparency */
   color: black; /* Set text color to black */
   border-radius: 12px; /* Add rounded corners */
@@ -30,7 +31,8 @@
   padding: 16px;
   display: flex;
   flex-direction: column;
-  height: 400px;
+  min-height: 300px;
+  height: auto;
   background-color: rgba(70, 68, 68, 0.8); /* Dark background with transparency */
   color: black; /* Set text color to black */
   border-radius: 12px; /* Add rounded corners */
@@ -53,4 +55,58 @@
 .doughnut-chart-box h6,
 .doughnut-chart-box .MuiTypography-body2 {
   color: black; /* Set text color to black */
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .chart-box,
+  .doughnut-chart-box {
+    min-height: 280px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-description-box {
+    flex-direction: column;
+    height: auto;
+    align-items: flex-start;
+  }
+
+  .chart-box,
+  .doughnut-chart-box {
+    min-height: 250px;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-description-box {
+    padding: 12px;
+    flex-direction: column;
+  }
+
+  .chart-box,
+  .doughnut-chart-box {
+    min-height: 200px;
+    padding: 10px;
+  }
+
+  .chart-box h6,
+  .doughnut-chart-box h6 {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .main-description-box,
+  .chart-box,
+  .doughnut-chart-box {
+    padding: 8px;
+    border-radius: 8px;
+  }
+
+  .chart-box,
+  .doughnut-chart-box {
+    min-height: 180px;
+  }
 }

@@ -2,6 +2,7 @@
   "main": "public/electron.js",
   "name": "mario-ojo-241334-formative-one-movie-ocean",
   "version": "0.1.0",
+  "homepage": "https://marioojo.github.io/mario-ojo-241334-formative-one-movie-ocean",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -26,6 +27,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron": "electron .",
@@ -67,6 +70,7 @@
   "devDependencies": {
     "concurrently": "^9.2.1",
     "electron": "^41.0.4",
-    "electron-builder": "^26.8.1"
+    "electron-builder": "^26.8.1",
+    "gh-pages": "^6.3.0"
   }
 }

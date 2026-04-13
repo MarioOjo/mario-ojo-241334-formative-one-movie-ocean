@@ -16,6 +16,7 @@
   border-radius: 5px;
   border: 1px solid #ccc;
   font-size: 1rem;
+  min-height: 44px;
 }
 
 .search-input-wrapper button {
@@ -28,6 +29,7 @@
   font-size: 1rem;
   font-weight: bold;
   transition: background-color 0.2s ease;
+  min-height: 44px;
 }
 
 .search-input-wrapper button:hover {
@@ -95,5 +97,51 @@
   
   .search-input-wrapper button {
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-container {
+    max-width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .search-input-wrapper {
+    gap: 8px;
+  }
+
+  .suggestion-poster {
+    width: 35px;
+    height: 50px;
+  }
+}
+
+@media (max-width: 320px) {
+  .search-container {
+    max-width: 100%;
+  }
+
+  .search-input-wrapper input,
+  .search-input-wrapper button {
+    font-size: 0.95rem;
+    min-height: 40px;
+    padding: 8px;
+  }
+
+  .suggestion-item {
+    padding: 6px 10px;
+  }
+
+  .suggestion-poster {
+    width: 30px;
+    height: 45px;
+  }
+
+  .suggestion-title {
+    font-size: 0.9rem;
+  }
+
+  .suggestion-year {
+    font-size: 0.7rem;
   }
 }
