@@ -2,7 +2,7 @@
   "main": "public/electron.js",
   "name": "mario-ojo-241334-formative-one-movie-ocean",
   "version": "0.1.0",
-  "homepage": "https://marioojo.github.io/mario-ojo-241334-formative-one-movie-ocean",
+  "homepage": "https://marioojo.github.io/mario-ojo-241334-formative-one-movie-verse",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.14.0",

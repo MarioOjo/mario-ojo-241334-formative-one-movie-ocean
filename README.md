@@ -1,8 +1,8 @@
-# [Movieverse](https://marioojo.github.io/mario-ojo-241334-formative-one-movie-ocean) - Movie Data Visualization App
+# [Movieverse](https://marioojo.github.io/mario-ojo-241334-formative-one-movie-verse) - Movie Data Visualization App
 
 A React + Electron application for visualizing and comparing movie metrics using data from **The Movie Database (TMDb) API**. Features interactive, responsive charts for financial and performance analysis across all devices.
 
-Live App: [Movieverse](https://marioojo.github.io/mario-ojo-241334-formative-one-movie-ocean)
+Live App: [Movieverse](https://marioojo.github.io/mario-ojo-241334-formative-one-movie-verse)
 
 ## 🎬 Key Features
 
@@ -223,7 +223,7 @@ Use this when you want your GitHub profile project link to open instantly in a b
    ```
 3. In your repository settings, ensure GitHub Pages is set to serve from the `gh-pages` branch.
 4. Use this live URL on your GitHub profile:
-   `https://marioojo.github.io/mario-ojo-241334-formative-one-movie-ocean`
+   `https://marioojo.github.io/mario-ojo-241334-formative-one-movie-verse`
 
 Notes:
 - The app uses hash-based routing for GitHub Pages compatibility, so internal routes load correctly.
